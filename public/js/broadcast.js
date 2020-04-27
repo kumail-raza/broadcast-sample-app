@@ -54,7 +54,7 @@ const vvOpenTokBroadcast = new function () {
         // Signal the status of the broadcast when requested
         session.on('signal:broadcast', function (event) {
             if (event.data === 'status') {
-                signal(session, status, event.from);
+                signal(event.from);
             }
         });
 
