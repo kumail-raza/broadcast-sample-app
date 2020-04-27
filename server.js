@@ -16,6 +16,7 @@ app.use(express.static(`${__dirname}/public`));
 app.use(bodyParser.json());
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
+app.use('/pocapp')
 
 /** Services */
 const opentok = require('./services/opentok-api');
