@@ -12,11 +12,10 @@ const R = require('ramda');
  */
 const app = express();
 const port = process.env.PORT || 8082;
-app.use(express.static(`${__dirname}/public`));
+app.use('/pocapp',express.static(`${__dirname}/public`));
 app.use(bodyParser.json());
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
-app.use('/pocapp')
 
 /** Services */
 const opentok = require('./services/opentok-api');
@@ -25,22 +24,22 @@ const opentok = require('./services/opentok-api');
  */
 
 app.get('/', (req, res) => {
-  res.redirect('/viewer');
+  res.redirect('/pocapp/viewer');
 });
 
-app.get('/viewer', (req, res) => {
+app.get('/pocapp/viewer', (req, res) => {
   opentok.getCredentials('viewer')
     .then(credentials => res.render('pages/viewer', { credentials: JSON.stringify(credentials) }))
     .catch(error => res.status(500).send(error));
 });
 
-app.get('/host', (req, res) => {
+app.get('/pocapp/host', (req, res) => {
   opentok.getCredentials('host')
     .then(credentials => res.render('pages/host', { credentials: JSON.stringify(credentials) }))
     .catch(error => res.status(500).send(error));
 });
 
-app.get('/guest', (req, res) => {
+app.get('/pocapp/guest', (req, res) => {
   opentok.getCredentials('guest')
     .then(credentials => res.render('pages/guest', { credentials: JSON.stringify(credentials) }))
     .catch(error => res.status(500).send(error));
