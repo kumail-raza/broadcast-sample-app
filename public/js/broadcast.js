@@ -1,78 +1,67 @@
-/* global flowplayer */
-(function () {
+const vvOpenTokBroadcast = new function () {
+    let mHandler;
+    let status;
+    let session;
 
-  /**
-   * Get our OpenTok API Key, Session ID, and Token from the JSON embedded
-   * in the HTML.
-   */
-  var getBroadcastData = function () {
-    var el = document.getElementById('broadcast');
-    var credentials = JSON.parse(el.getAttribute('data'));
-    el.remove();
-    return credentials;
-  };
+    /**
+     * Send the broadcast status to everyone connected to the session using
+     * the OpenTok signaling API
+     * @param {Object} session
+     * @param {String} status
+     * @param {Object} [to] - An OpenTok connection object
+     */
+    const signal = function (to) {
+        var signalData = Object.assign({}, {type: 'broadcast', data: status}, to ? {to} : {});
+        console.log('signal', JSON.stringify(signalData));
+        session.signal(signalData, function (error) {
+            if (error) {
+                console.log(['signal error (', error.code, '): ', error.message].join(''));
+            } else {
+                console.log('signal sent');
+                if (status === 'active')
+                    mHandler.onBroadcastStart();
+                else
+                    mHandler.onBroadcastEnd();
+            }
+        });
+    };
 
-  /**
-   * Update the banner based on the status of the broadcast (active or ended)
-   */
-  var updateBanner = function (status) {
-
-    var banner = document.getElementById('banner');
-    var bannerText = document.getElementById('bannerText');
-
-    if (status === 'active') {
-      banner.classList.add('hidden');
-    } else if (status === 'ended') {
-      bannerText.classList.add('red');
-      bannerText.innerHTML = 'The Broadcast is Over';
-      banner.classList.remove('hidden');
-    }
-  };
-
-  var play = function (source) {
-
-    updateBanner('active');
-
-    flowplayer('#videoContainer', {
-      splash: false,
-      embed: false,
-      ratio: 9 / 16,
-      autoplay: true,
-      clip: {
-        autoplay: true,
-        live: true,
-        hlsjs: {
-          // listen to hls.js ERROR
-          listeners: ['hlsError'],
-        },
-        sources: [{
-          type: 'application/x-mpegurl',
-          src: source
-        }]
-      }
-    }).on('hlsError', function (e, api, error) {
-
-      // Broadcast end
-      if (error.type === 'networkError' && error.details === 'levelLoadError') {
-        api.stop();
-        updateBanner('ended');
-        document.getElementById('videoContainer').classList.add('hidden');
-      }
-    });
-  };
-
-  var init = function () {
-
-    var broadcast = getBroadcastData();
-    if (broadcast.availableAt <= Date.now()) {
-      play(broadcast.url);
-    } else {
-      setTimeout(function () { play(broadcast.url); },
-        broadcast.availableAt - Date.now());
+    const setHandlers = function (handler) {
+        mHandler = handler;
     }
 
-  };
+    /**
+     * Make a request to the server to start the broadcast
+     * @param {String} sessionId
+     */
+    const startBroadcast = function (session, to) {
+        status = 'active';
+        signal(to);
+    };
 
-  document.addEventListener('DOMContentLoaded', init);
+    /**
+     * Make a request to the server to stop the broadcast
+     * @param {String} sessionId
+     */
+    const endBroadcast = function (session, to) {
+        status = 'ended'
+        signal(to);
+    };
 
-}());
+    this.init = function (OTSession) {
+        session = OTSession;
+
+        // Signal the status of the broadcast when requested
+        session.on('signal:broadcast', function (event) {
+            if (event.data === 'status') {
+                signal(session, status, event.from);
+            }
+        });
+
+        return {
+            startBroadcast,
+            endBroadcast,
+            setHandlers
+        }
+    }
+};

@@ -86,7 +86,7 @@ body {
     border-radius: 8px;
 }
 
-.publisher-controls-container {
+.subcriber-controls-container, .publisher-controls-container {
     height: 70px;
     width: 36px;
     background-color: rgba(0, 0, 0, 0.4);
@@ -96,14 +96,14 @@ body {
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
-    top: 20px;
+    top: 40px;
     left: 20px;
     padding: 10px 0 !important;
     border-radius: 20px;
     box-sizing: border-box;
 }
 
-.publisher-controls-container .control {
+.subcriber-controls-container .control, .publisher-controls-container .control {
     background-size: contain;
     background-repeat: no-repeat;
     height: 16px;
@@ -111,19 +111,19 @@ body {
     cursor: pointer;
 }
 
-.publisher-controls-container .video-control {
+.subcriber-controls-container .video-control, .publisher-controls-container .video-control {
     background-image: url('../images/video-icon.png');
 }
 
-.publisher-controls-container .video-control.disabled {
+.subcriber-controls-container .video-control.disabled, .publisher-controls-container .video-control.disabled {
     background-image: url('../images/no-video-icon.png');
 }
 
-.publisher-controls-container .audio-control {
+.subcriber-controls-container .audio-control, .publisher-controls-container .audio-control {
     background-image: url('../images/mic.png');
 }
 
-.publisher-controls-container .audio-control.disabled {
+.subcriber-controls-container .audio-control.disabled, .publisher-controls-container .audio-control.disabled {
     background-image: url('../images/muted-mic.png');
 }
 
