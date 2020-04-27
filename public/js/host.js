@@ -35,7 +35,12 @@
             vvOT.unpublishStream();
             const videoSourceOption = document.querySelector('select[name=videoSource]');
             const selectedOption = videoSourceOption.options[videoSourceOption.selectedIndex].value;
-            delete properties.videoSource;
+            const mySearchParams = new URLSearchParams(location.search);
+            const properties = {
+                container: 'hostDivider',
+                name: mySearchParams.get('name') || 'Host',
+                insertMode: 'before',
+            };
             if (selectedOption === 'screen') {
                 properties.videoSource = 'screen';
             }
