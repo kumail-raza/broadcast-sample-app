@@ -52,7 +52,7 @@
         const credentials = getCredentials();
         const props = {connectionEventsSuppressed: true};
         const vvOT = new vvOpenTok();
-        const icHandler = new ICommonJS();
+        const icHandler = new IOpenTok();
         icHandler.onConnect = function (error) {
             if (error) {
                 console.log(error);
@@ -85,8 +85,8 @@
         icHandler.onBroadcastEnd = function () {
             updateStatus('ended')
         }
-        vvOT.setHandlers(icHandler);
-        vvOT.init(props, credentials);
+        vvOT.registerEvents(icHandler);
+        vvOT.connect(props, credentials);
 
         var startStopButton = document.getElementById('startStop');
         startStopButton.classList.remove('hidden');

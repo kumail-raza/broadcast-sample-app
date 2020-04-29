@@ -26,7 +26,7 @@ const vvOpenTokBroadcast = new function () {
         });
     };
 
-    const setHandlers = function (handler) {
+    const registerEvents = function (handler) {
         mHandler = handler;
     }
 
@@ -61,7 +61,7 @@ const vvOpenTokBroadcast = new function () {
         return {
             startBroadcast,
             endBroadcast,
-            setHandlers
+            registerEvents
         }
     }
 };

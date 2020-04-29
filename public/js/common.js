@@ -154,11 +154,11 @@ const vvOpenTok = function () {
         vvOpenTokBroadcastListener.init(session, container, mHandler);
     }
 
-    this.setHandlers = function (handler) {
+    this.registerEvents = function (handler) {
         mHandler = handler;
     }
 
-    this.init = function (props, credentials) {
+    this.connect = function (props, credentials) {
         var credentials = credentials || getCredentials();
         session = OT.initSession(credentials.apiKey, credentials.sessionId, props);
         session.connect(credentials.token, function () {
@@ -170,7 +170,7 @@ const vvOpenTok = function () {
 
     this.enableBroadcast = function () {
         const instance = vvOpenTokBroadcast.init(session);
-        instance.setHandlers(mHandler);
+        instance.registerEvents(mHandler);
         return instance;
     }
     // document.addEventListener('DOMContentLoaded', init);

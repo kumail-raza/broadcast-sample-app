@@ -69,8 +69,8 @@ const vvOpenTokBroadcastListener = new function () {
                     session.unsubscribe(subscriber);
                 });
             }
-            if (mHandler.broadcastStatusListener) {
-                mHandler.broadcastStatusListener(status);
+            if (mHandler.broadcastStatus) {
+                mHandler.broadcastStatus(status);
             }
         });
     };

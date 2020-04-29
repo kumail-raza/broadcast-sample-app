@@ -1,4 +1,4 @@
-const ICommonJS = function () {
+const IOpenTok = function () {
     this.onStreamCreated = null;
     this.onStreamDestroyed = null;
     this.onConnect =  null;
@@ -6,5 +6,5 @@ const ICommonJS = function () {
     this.onBroadcastStart = null;
     this.onBroadcastEnd = null;
 
-    this.broadcastStatusListener = null;
+    this.broadcastStatus = null;
 }
