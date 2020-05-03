@@ -114,7 +114,7 @@ const vvOpenTok = function () {
             toggleMedia(publisher, this);
         });
         publisherContainer.querySelector('#publishAudio').addEventListener('click', function () {
-          toggleMedia(publisher, this);
+            toggleMedia(publisher, this);
         });
     };
 
@@ -174,4 +174,16 @@ const vvOpenTok = function () {
         return instance;
     }
     // document.addEventListener('DOMContentLoaded', init);
+
+    this.publisherAudio = function (value) {
+        controls.publisher.publishAudio(value)
+    }
+
+    this.publisherVideo = function (value) {
+        controls.publisher.publishVideo(value)
+    }
+
+    this.subscriberAudio = function (id, value) {
+        controls.subscriber.get(id).subcribesToAudio(value)
+    }
 };

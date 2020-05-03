@@ -21,14 +21,14 @@ const defaultSessionOptions = { mediaMode: 'routed' };
  * Returns options for token creation based on user type
  * @param {String} userType Host, guest, or viewer
  */
-const tokenOptions = (userType) => {
+const tokenOptions = (user) => {
   const role = {
     host: 'moderator',
     guest: 'publisher',
     viewer: 'subscriber',
-  }[userType];
+  }[user.type];
 
-  return { role };
+  return { role, 'data': user };
 };
 
 /**
@@ -55,7 +55,7 @@ const createSession = options =>
  * @param {String} userType Host, guest, or viewer
  * @returns {String}
  */
-const createToken = userType => OT.generateToken(activeSession.sessionId, tokenOptions(userType));
+const createToken = user => OT.generateToken(activeSession.sessionId, tokenOptions(user));
 
 /** Exports */
 
@@ -63,15 +63,15 @@ const createToken = userType => OT.generateToken(activeSession.sessionId, tokenO
  * Creates an OpenTok session and generates an associated token
  * @returns {Promise} <Resolve => {Object}, Reject => {Error}>
  */
-const getCredentials = userType =>
+const getCredentials = user =>
   new Promise((resolve, reject) => {
     if (activeSession) {
-      const token = createToken(userType);
+      const token = createToken(user);
       resolve({ apiKey, sessionId: activeSession.sessionId, token });
     } else {
 
       const addToken = (session) => {
-        const token = createToken(userType);
+        const token = createToken(user);
         return Promise.resolve({ apiKey, sessionId: session.sessionId, token });
       };
 

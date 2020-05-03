@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/pocapp/viewer', (req, res) => {
-  opentok.getCredentials('viewer')
+  opentok.getCredentials({type:'viewer', identity: req.})
     .then(credentials => res.render('pages/viewer', { credentials: JSON.stringify(credentials) }))
     .catch(error => res.status(500).send(error));
 });
