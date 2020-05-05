@@ -74,7 +74,10 @@ var init = function (credentials, container, name = 'Host', streamSource) {
             localStorage.removeItem('tab-count');
 
             const properties = {name: container + ',' + name};
-
+            const vidContainer = 'vidContainer' + container.replace(/[a-z]/g, '')
+            if (!$(`#${container} #${vidContainer}`).length) {
+                $(`#${container}`).append(`<div id="${vidContainer}"></div>`)
+            }
             properties.container = vidContainer;
 
             if (streamSource === 'screen') {
