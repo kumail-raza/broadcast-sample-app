@@ -218,13 +218,14 @@
                             <li data-value="screen">Screenshare</li>
                         </ul>
                     </div>
+
                     <div>
-                        <div id="k-tab-webcam">
-                            <div>
-                                asdf
+                        <div class="k-tab-webcam">
+                            <div id="tree" class="left">
+                                <ul></ul>
                             </div>
-                            <div>
-                                asdf
+                            <div class="right">
+                                working ...
                             </div>
                         </div>
                     </div>
@@ -263,7 +264,73 @@
 <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript">
+
+    var addTree = (response) => {
+        response = {
+            "status": {
+                "isSuccess": true
+            },
+            "data": {
+                "41": {
+                    "title": "devtest",
+                    "onRampReservationLess": [],
+                    "onRampScheduled": [],
+                    "reservationLess": {},
+                    "scheduled": {
+                        "1100": [
+                            {
+                                "id": "1927",
+                                "name": "User 1"
+                            },
+                            {
+                                "id": "1872",
+                                "name": "User 2"
+                            },
+                            {
+                                "id": "1926",
+                                "name": "User 3"
+                            }
+                        ]
+                    }
+                },
+                "UFO": []
+            }
+        }
+        if (response.data['41'].scheduled) {
+            const schedule = response.data['41'].scheduled;
+            const groups = []
+            for (let group in schedule) {
+                const users = schedule[group].map(user => {
+                    return `<li data-id="${user.id}">${user.name}</li>`
+                })
+                groups.push('<li>\n<span class="arrow">' + group + '</span>\n<ul class="nested">\n ' + users.join('\n ') + '\n</ul>\n</li>')
+            }
+            console.log(groups.join('\n'));
+            $('#tree ul').html(groups.join('\n'))
+        }
+
+        $(() => {
+            var toggler = document.getElementById('tree').getElementsByClassName("arrow");
+            for (let i = 0; i < toggler.length; i++) {
+                toggler[i].addEventListener("click", function () {
+                    this.parentElement.querySelector(".nested").classList.toggle("active");
+                    this.classList.toggle("arrow-down");
+                });
+            }
+
+        })
+    }
+
+    addTree({});
     $(() => {
+        $.ajax({
+            url: "https://qaapp.voicevoice.com/cmserver/api/getServerState",
+            type: "get",
+            success: (response) => {
+                addTree(response)
+            }
+        });
+
         $('.box .dropdown-menu li:not([role="separator"])').on('click', function () {
             sessionStorage.setItem('prevSelectedBox', sessionStorage.getItem('selectedBox'))
             const boxId = $(this).parent().parent().parent().attr('id');
