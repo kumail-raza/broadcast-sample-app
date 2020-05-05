@@ -26,9 +26,9 @@ const tokenOptions = (user) => {
     host: 'moderator',
     guest: 'publisher',
     viewer: 'subscriber',
-  }[user.type];
+  }[user];
 
-  return { role, 'data': user };
+  return { role };
 };
 
 /**

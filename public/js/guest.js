@@ -1,60 +1,78 @@
-(function () {
-    /**
-     * Get our OpenTok API Key, Session ID, and Token from the JSON embedded
-     * in the HTML.
-     */
-    var getCredentials = function () {
-        var el = document.getElementById('credentials');
-        var credentials = JSON.parse(el.getAttribute('data'));
-        el.remove();
-        return credentials;
-    };
-
-
-    var attachDOMEvents = function (vvOT) {
-
-        document.querySelector('select[name=videoSource]').addEventListener('change', function (ev) {
+var attachDOMEvents = function (vvOT) {
+    window.toggleStreams = (function () {
+        return function () {
+            // var occupied = $('#' + selectedBox).parent().find('[class*="OT_pub"]').length > 0 ||
+            //     $('#' + selectedBox).parent().find('[class*="OT_sub"]').length > 0;
+            // if (occupied) {
+            const prevSelectedBox = sessionStorage.getItem('prevSelectedBox');
+            $(`#${prevSelectedBox} .webcam-options`).removeClass('enable')
+            $(`#${prevSelectedBox} .name`).text('')
+            $(`#${prevSelectedBox} .name`).hide();
             vvOT.unpublishStream();
-            const videoSourceOption = document.querySelector('select[name=videoSource]');
-            const selectedOption = videoSourceOption.options[videoSourceOption.selectedIndex].value;
-            const mySearchParams = new URLSearchParams(location.search);
-            const properties = {
-                container: 'hostDivider',
-                name: mySearchParams.get('name') || 'Host',
-                insertMode: 'before',
-            };
-            if (selectedOption === 'screen') {
+            // }
+
+            const selectedBox = sessionStorage.getItem('selectedBox') || 'box1';
+            const properties = {name: selectedBox + ',' + sessionStorage.getItem('userName')};
+            const vidContainer = 'vidContainer' + selectedBox.replace(/[a-z]/g, '')
+            if (!$(`#${selectedBox} #${vidContainer}`).length) {
+                $(`#${selectedBox}`).append(`<div id="${vidContainer}"></div>`)
+            }
+            properties.container = vidContainer;
+            if (sessionStorage.getItem('streamSource') === 'screen') {
                 properties.videoSource = 'screen';
             }
             vvOT.publishOwnStreams(properties);
-        })
+
+            const boxID = sessionStorage.getItem('selectedBoxPID');
+            $(`#${boxID} .webcam-options`).addClass('enable')
+            $(`#${boxID} .name`).text(sessionStorage.getItem('userName'))
+            $(`#${boxID} .name`).show();
+
+            $.ajax({
+                url: "http://localhost:8082/live/demo/session",
+                type: "post",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                data: JSON.stringify({
+                    broadcastStatus: true,
+                    videoSource: sessionStorage.getItem('streamSource'),
+                    prevBox: sessionStorage.getItem('selectedBoxPID')
+                })
+            });
+        }
+    })(vvOT);
+}
+
+let vvOTx;
+var publishSelf = function (container, name = 'Guest', streamSource) {
+    const properties = {name: container + ',' + name};
+    const vidContainer = 'vidContainer' + container.replace(/[a-z]/g, '')
+    if (!$(`#${container} #${vidContainer}`).length) {
+        $(`#${container}`).append(`<div id="${vidContainer}"></div>`)
     }
+    properties.container = vidContainer;
+    if (streamSource === 'screen') {
+        properties.videoSource = streamSource;
+    }
+    vvOTx.publishOwnStreams(properties);
+    attachDOMEvents(vvOTx);
+}
 
-
-    var init = function () {
-        const credentials = getCredentials();
-        const props = {connectionEventsSuppressed: true};
-        const vvOT = new vvOpenTok();
-        const icHandler = new IOpenTok();
-        icHandler.onConnect = function (error) {
-            if (error) {
-                console.log(error);
-            } else {
-                const mySearchParams = new URLSearchParams(location.search);
-                const properties = {
-                    container: 'hostDivider',
-                    name: mySearchParams.get('name') || 'Guest',
-                    insertMode: 'after'
-                };
-                vvOT.publishOwnStreams(properties);
-                vvOT.subcribesToStreams('hostDivider');
-
-                attachDOMEvents(vvOT);
-            }
-        };
-        vvOT.registerEvents(icHandler);
-        vvOT.connect(props, credentials);
+var init = function (credentials) {
+    const props = {connectionEventsSuppressed: true};
+    const vvOT = new vvOpenTok();
+    vvOTx = vvOT;
+    const icHandler = new IOpenTok();
+    icHandler.onConnect = function (error) {
+        if (error) {
+            console.log(error);
+        } else {
+            vvOT.subcribesToStreams();
+        }
     };
+    vvOT.registerEvents(icHandler);
+    vvOT.connect(props, credentials);
+};
 
-    document.addEventListener('DOMContentLoaded', init);
-}());
+// document.addEventListener('DOMContentLoaded', init);

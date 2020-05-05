@@ -1,0 +1,129 @@
+{
+  "status": {
+    "isSuccess": true
+  },
+  "data": {
+    "41": {
+      "title": "devtest",
+      "onRampReservationLess": [
+        {
+          "id": "1922",
+          "name": "kumail",
+          "email": "",
+          "profilePicUrl": "",
+          "isInGroup": "false",
+          "conversationScheduleId": "",
+          "conversationId": "41",
+          "authToken": "QgalKm",
+          "onRampPageId": "153",
+          "waitingToReconnect": "false",
+          "preventDialog": "false",
+          "onDonations": "false",
+          "onDonationsView": "false",
+          "mode": "1",
+          "phone": "",
+          "zipcode": "",
+          "interestTag": "",
+          "scheduleTime": "",
+          "scheduleDurationInMin": "",
+          "scheduleId": "",
+          "type": "unscheduled",
+          "micState": "1",
+          "startTime": "1587492156492"
+        }
+      ],
+      "onRampScheduled": [],
+      "scheduled": {
+        "1090": [
+          {
+            "id": "1923",
+            "name": "kumail",
+            "email": "asd@SDf.asdf",
+            "profilePicUrl": "",
+            "isInGroup": "true",
+            "conversationScheduleId": "1323",
+            "conversationId": "41",
+            "authToken": "LgMlwA",
+            "onRampPageId": "153",
+            "waitingToReconnect": "false",
+            "preventDialog": "false",
+            "onDonations": "false",
+            "onDonationsView": "false",
+            "mode": "1",
+            "phone": "",
+            "zipcode": "",
+            "interestTag": "",
+            "scheduleTime": "1587491880000",
+            "scheduleDurationInMin": "10",
+            "scheduleId": "1323",
+            "type": "scheduled",
+            "micState": "1",
+            "startTime": "1587492074626",
+            "currentPageId": "154",
+            "isVideoEnded": "true",
+            "endTime": "1587492072517",
+            "userLeftTimer": "true"
+          },
+          {
+            "id": "1925",
+            "name": "kumail5",
+            "email": "asdf@asdf.asdf",
+            "profilePicUrl": "",
+            "isInGroup": "true",
+            "conversationScheduleId": "1323",
+            "conversationId": "41",
+            "authToken": "L8VvBP",
+            "onRampPageId": "153",
+            "waitingToReconnect": "false",
+            "preventDialog": "false",
+            "onDonations": "false",
+            "onDonationsView": "false",
+            "mode": "1",
+            "phone": "",
+            "zipcode": "",
+            "interestTag": "",
+            "scheduleTime": "1587491880000",
+            "scheduleDurationInMin": "10",
+            "scheduleId": "1323",
+            "type": "scheduled",
+            "micState": "1",
+            "startTime": "1587492216822",
+            "currentPageId": "154"
+          }
+        ]
+      },
+      "reservationLess": {
+        "1092": [
+          {
+            "id": "1924",
+            "name": "kumail1",
+            "email": "",
+            "profilePicUrl": "",
+            "isInGroup": "true",
+            "conversationScheduleId": "",
+            "conversationId": "41",
+            "authToken": "T9q5kI",
+            "onRampPageId": "153",
+            "waitingToReconnect": "false",
+            "preventDialog": "false",
+            "onDonations": "false",
+            "onDonationsView": "false",
+            "mode": "1",
+            "phone": "",
+            "zipcode": "",
+            "interestTag": "",
+            "scheduleTime": "",
+            "scheduleDurationInMin": "",
+            "scheduleId": "",
+            "type": "unscheduled",
+            "micState": "1",
+            "startTime": "1587492148351",
+            "currentPageId": "154",
+            "isVideoEnded": "true"
+          }
+        ]
+      }
+    },
+    "UFO": []
+  }
+}

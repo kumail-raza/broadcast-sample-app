@@ -12,7 +12,7 @@ const vvOpenTok = function () {
     var insertOptions = {
         width: '100%',
         height: '100%',
-        showControls: true
+        showControls: false
     };
 
     /**
@@ -38,16 +38,27 @@ const vvOpenTok = function () {
     /**
      * Subscribe to a stream
      */
-    var subscribe = function (containerDiv, stream) {
-        var name = stream.name;
-        var properties = {name, insertMode: 'after', ...insertOptions};
-        const subcriber = session.subscribe(stream, containerDiv, properties, function (error) {
+    var subscribe = function (stream) {
+        var option = stream.name.split(',');
+        console.log(option)
+        var name = option[1];
+        var container = option[0];
+
+        const vidContainer = 'vidContainer' + container.replace(/[a-z]/g, '')
+        if (!$(`#${container} #${vidContainer}`).length) {
+            $(`#${container}`).append(`<div id="${vidContainer}"></div>`)
+        }
+        $(`#${container} .name`).text(name)
+        var properties = {name, ...insertOptions};
+        const subcriber = session.subscribe(stream, vidContainer, properties, function (error) {
             if (error) {
                 console.log(error);
             }
         });
+
         addSubscriberControls(subcriber.id);
         subcribers.set(subcriber.id, subcriber);
+
         window.mSub = subcribers;
     };
 
@@ -141,10 +152,10 @@ const vvOpenTok = function () {
         return Object.assign(controls, {subcribers});
     }
 
-    this.subcribesToStreams = function (containerDiv) {
+    this.subcribesToStreams = function () {
         setEventListeners(function (event) {
             window.mE = event;
-            subscribe(containerDiv, event.stream);
+            subscribe(event.stream);
             if (mHandler.onStreamCreated)
                 mHandler.onStreamCreated(event);
         });
