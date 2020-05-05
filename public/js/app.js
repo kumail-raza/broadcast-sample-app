@@ -10,7 +10,7 @@ const getNextAvailableBox = function () {
 var getToken = (id, name, type) => {
     return new Promise(function (resolve, reject) {
         $.ajax({
-            url: "http://localhost:8083/live/demo/accessToken",
+            url: "https://qaapp.voicevoice.com/live/demo/accessToken",
             type: "post",
             "headers": {
                 "Content-Type": "application/json"

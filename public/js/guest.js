@@ -29,7 +29,7 @@ var attachDOMEvents = function (vvOT) {
             $(`#${boxID} .name`).show();
 
             $.ajax({
-                url: "http://localhost:8083/live/demo/session",
+                url: "https://qaapp.voicevoice.com/live/demo/session",
                 type: "post",
                 "headers": {
                     "Content-Type": "application/json"

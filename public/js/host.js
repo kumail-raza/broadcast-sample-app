@@ -48,7 +48,7 @@ var attachDOMEvents = function (vvOT) {
             $(`#${selectedBox} .name`).show();
 
             $.ajax({
-                url: "http://localhost:8083/live/demo/session",
+                url: "https://qaapp.voicevoice.com/live/demo/session",
                 type: "post",
                 "headers": {
                     "Content-Type": "application/json"
@@ -90,7 +90,7 @@ var init = function (credentials, container, name = 'Host', streamSource) {
             attachDOMEvents(vvOT);
 
             $.ajax({
-                url: "http://localhost:8083/live/demo/session",
+                url: "https://qaapp.voicevoice.com/live/demo/session",
                 type: "post",
                 "headers": {
                     "Content-Type": "application/json"
@@ -152,7 +152,7 @@ var init = function (credentials, container, name = 'Host', streamSource) {
 window.onbeforeunload = () => {
     console.log('closing')
     $.ajax({
-        url: "http://localhost:8083/live/demo/session",
+        url: "https://qaapp.voicevoice.com/live/demo/session",
         type: "delete"
     });
 }
