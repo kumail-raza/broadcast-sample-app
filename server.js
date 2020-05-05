@@ -11,7 +11,7 @@ const R = require('ramda');
  * Config
  */
 const app = express();
-const port = process.env.PORT || 8082;
+const port = process.env.PORT || 8083;
 app.use('/live', express.static(`${__dirname}/public`));
 app.use(bodyParser.json());
 app.set('views', `${__dirname}/views`);

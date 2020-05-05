@@ -48,7 +48,7 @@ var attachDOMEvents = function (vvOT) {
             $(`#${selectedBox} .name`).show();
 
             $.ajax({
-                url: "http://localhost:8082/live/demo/session",
+                url: "http://localhost:8083/live/demo/session",
                 type: "post",
                 "headers": {
                     "Content-Type": "application/json"
@@ -74,10 +74,7 @@ var init = function (credentials, container, name = 'Host', streamSource) {
             localStorage.removeItem('tab-count');
 
             const properties = {name: container + ',' + name};
-            const vidContainer = 'vidContainer' + container.replace(/[a-z]/g, '')
-            if (!$(`#${container} #${vidContainer}`).length) {
-                $(`#${container}`).append(`<div id="${vidContainer}"></div>`)
-            }
+        g
             properties.container = vidContainer;
 
             if (streamSource === 'screen') {
@@ -93,7 +90,7 @@ var init = function (credentials, container, name = 'Host', streamSource) {
             attachDOMEvents(vvOT);
 
             $.ajax({
-                url: "http://localhost:8082/live/demo/session",
+                url: "http://localhost:8083/live/demo/session",
                 type: "post",
                 "headers": {
                     "Content-Type": "application/json"
@@ -146,7 +143,7 @@ var init = function (credentials, container, name = 'Host', streamSource) {
     //         alert('max 4 can be a host a time')
     //         return;
     //     }
-    //     window.open('http://localhost:8082/guest', `newtab${tabCount + 1}`);
+    //     window.open('http://localhost:808e/guest', `newtab${tabCount + 1}`);
     //     localStorage.setItem('tab-count', ++tabCount);
     // });
 };
@@ -155,7 +152,7 @@ var init = function (credentials, container, name = 'Host', streamSource) {
 window.onbeforeunload = () => {
     console.log('closing')
     $.ajax({
-        url: "http://localhost:8082/live/demo/session",
+        url: "http://localhost:8083/live/demo/session",
         type: "delete"
     });
 }
