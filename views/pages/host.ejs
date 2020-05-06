@@ -57,7 +57,7 @@
 
         <div class="collapse navbar-collapse" id="layout-dd">
             <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
+                <li class="dropdown" style="display:none;">
                     <a href="javascript:void(0)" class="dropdown-toggle user" data-toggle="dropdown" role="button"
                        aria-haspopup="true"
                        aria-expanded="false">
@@ -102,82 +102,17 @@
     <div class="main-content two-two">
         <div class="box-container">
             <div id="box1" class="box">
-                <div class="header">
-                    <button class="active  dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false"><span class="sno">1</span><span> Select source  <span
-                                    class="caret"></span></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)">Add New Source</a></li>
-                        <li role="separator" class="divider"></li>
-                        <h6 class="dropdown-header">AVAILABLE SOURCES</h6>
-                        <li data-value="webcam"><a href="javascript:void(0)">Webcam</a></li>
-                        <li data-value="screen"><a href="javascript:void(0)">ScreenShare</a></li>
-                    </ul>
-                    <div class="webcam-options">
-                        <i aria-hidden="true" class="fa fa-video-camera icons-conf" data-button="video"></i>
-                        <i aria-hidden="true" class="fa fa-microphone icons-conf" data-button="audio"></i>
+                <div id="main" class="main-container">
+                    <div id="videoContainer" class="video-container wrap">
+                        <div id="hostDivider" class="hidden"></div>
                     </div>
                 </div>
-                <span class="name"></span>
-            </div>
-            <div id="box2" class="box">
-                <div class="header">
-                    <button class="active  dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false"><span class="sno">2</span><span> Select source  <span
-                                    class="caret"></span></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)">Add New Source</a></li>
-                        <li role="separator" class="divider"></li>
-                        <h6 class="dropdown-header">AVAILABLE SOURCES</h6>
-                        <li data-value="webcam"><a href="javascript:void(0)">Webcam</a></li>
-                        <li data-value="screen"><a href="javascript:void(0)">ScreenShare</a></li>
-                    </ul>
-                    <div class="webcam-options">
-                        <i aria-hidden="true" class="fa fa-video-camera icons-conf" data-button="video"></i>
-                        <i aria-hidden="true" class="fa fa-microphone icons-conf" data-button="audio"></i>
-                    </div>
+                <div class="broadcast-controls-container">
+                    <select name="videoSource">
+                        <option value="webcam" selected>Webcam</option>
+                        <option value="screen">Screen</option>
+                    </select>
                 </div>
-                <span class="name"></span>
-            </div>
-        </div>
-        <div class="box-container container2">
-            <div id="box3" class="box">
-                <div class="header">
-                    <button class="active  dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false"><span class="sno">3</span><span> Select source  <span
-                                    class="caret"></span></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)">Add New Source</a></li>
-                        <li role="separator" class="divider"></li>
-                        <h6 class="dropdown-header">AVAILABLE SOURCES</h6>
-                        <li data-value="webcam"><a href="javascript:void(0)">Webcam</a></li>
-                        <li data-value="screen"><a href="javascript:void(0)">ScreenShare</a></li>
-                    </ul>
-                    <div class="webcam-options">
-                        <i aria-hidden="true" class="fa fa-video-camera icons-conf" data-button="video"></i>
-                        <i aria-hidden="true" class="fa fa-microphone icons-conf" data-button="audio"></i>
-                    </div>
-                </div>
-                <span class="name"></span>
-            </div>
-            <div id="box4" class="box   ">
-                <div class="header">
-                    <button class="active  dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false"><span class="sno">4</span><span> Select source  <span
-                                    class="caret"></span></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)">Add New Source</a></li>
-                        <li role="separator" class="divider"></li>
-                        <h6 class="dropdown-header">AVAILABLE SOURCES</h6>
-                        <li data-value="webcam"><a href="javascript:void(0)">Webcam</a></li>
-                        <li data-value="screen"><a href="javascript:void(0)">ScreenShare</a></li>
-                    </ul>
-                    <div class="webcam-options">
-                        <i aria-hidden="true" class="fa fa-video-camera icons-conf" data-button="video"></i>
-                        <i aria-hidden="true" class="fa fa-microphone icons-conf" data-button="audio"></i>
-                    </div>
-                </div>
-                <span class="name"></span>
             </div>
         </div>
     </div>
@@ -210,7 +145,15 @@
         </div>
     </div>
 </div>
-
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid text-center">
+        <div style="padding: 20px;">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#newSourceModal" data-keyboard="false">Add
+                New Source
+            </button>
+        </div>
+    </div>
+</nav>
 <!-- Modal -->
 <div class="modal fade" id="newSourceModal" role="dialog">
     <div class="modal-dialog">
@@ -274,207 +217,5 @@
 <!-- Site scripts placed at the end of the document so the pages load faster -->
 <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
-<script type="text/javascript">
-    var addTree = (response) => {
-        response = {
-            "status": {
-                "isSuccess": true
-            },
-            "data": {
-                "41": {
-                    "title": "devtest",
-                    "onRampReservationLess": [],
-                    "onRampScheduled": [],
-                    "reservationLess": {},
-                    "scheduled": {
-                        "1100": [
-                            {
-                                "id": "1927",
-                                "name": "User 1"
-                            },
-                            {
-                                "id": "1872",
-                                "name": "User 2"
-                            },
-                            {
-                                "id": "1926",
-                                "name": "User 3"
-                            }
-                        ]
-                    }
-                },
-                "UFO": []
-            }
-        }
-        if (response.data['41'].scheduled) {
-            const schedule = response.data['41'].scheduled;
-            const groups = []
-            for (let group in schedule) {
-                const users = schedule[group].map(user => {
-                    return `<li data-id="${user.id}">${user.name}</li>`
-                })
-                groups.push('<li>\n<span class="arrow">' + group + '</span>\n<ul class="nested">\n ' + users.join('\n ') + '\n</ul>\n</li>')
-            }
-            console.log(groups.join('\n'));
-            $('#tree ul').html(groups.join('\n'))
-        }
-
-        $(() => {
-            var toggler = document.getElementById('tree').getElementsByClassName("arrow");
-            for (let i = 0; i < toggler.length; i++) {
-                toggler[i].addEventListener("click", function () {
-                    this.parentElement.querySelector(".nested").classList.toggle("active");
-                    this.classList.toggle("arrow-down");
-                });
-            }
-
-        })
-    }
-
-    addTree({});
-    $(() => {
-        $.ajax({
-            url: "https://qaapp.voicevoice.com/cmserver/api/getServerState",
-            type: "get",
-            success: (response) => {
-                addTree(response)
-            }
-        });
-        $.ajax({
-            url: "https://qaapp.voicevoice.com/live/demo/session",
-            type: "get",
-            success: (response) => {
-                if (response.data) {
-                    const mySearchParams = new URLSearchParams(location.search);
-                    const userId = 123;
-                    const userName = mySearchParams.get('name') || sessionStorage.getItem('userName');
-                    sessionStorage.setItem('selectedBox', response.data.prevBox);
-                    sessionStorage.setItem('streamSource', response.data.videoSource);
-
-                    const streamSource = sessionStorage.getItem('streamSource');
-                    const selectedBox = sessionStorage.getItem('selectedBox');
-
-                    getToken(userId, userName).then((credentials) => {
-                        init(credentials, selectedBox, userName, streamSource);
-                    })
-                }
-            }
-        });
-
-        $('.box .dropdown-menu li:not([role="separator"])').on('click', function () {
-            sessionStorage.setItem('prevSelectedBox', sessionStorage.getItem('selectedBox'))
-            const boxId = $(this).parent().parent().parent().attr('id');
-            console.log(boxId)
-            sessionStorage.setItem('selectedBox', boxId)
-            sessionStorage.setItem('streamSource', $(this).data('value'));
-
-            if (!$(this).data('value')) {
-                $('#newSourceModal').modal('show')
-                return;
-            }
-
-            if (window.toggleStreams)
-                window.toggleStreams();
-            else {
-                const mySearchParams = new URLSearchParams(location.search);
-                const userId = 123;
-                const userName = mySearchParams.get('name');
-                const streamSource = sessionStorage.getItem('streamSource');
-                const selectedBox = sessionStorage.getItem('selectedBox') || getNextAvailableBox();
-                sessionStorage.setItem('userName', userName);
-
-                if (userName) {
-                    getToken(userId, userName, 'host').then((credentials) => {
-                        init(credentials, selectedBox, userName, streamSource);
-                    })
-                } else {
-                    $('#nameModal').modal('show');
-                    $('#nameModal #nameModalSaveBtn').on('click', function () {
-                        $('#nameModal').modal('hide');
-                        const userName = $('#nameModal #userName').val();
-                        sessionStorage.setItem('userName', userName)
-                        getToken(userId, userName, 'host').then((credentials) => {
-                            init(credentials, selectedBox, userName, streamSource);
-                        })
-                    })
-                }
-            }
-        })
-
-        $('.box .webcam-options i').on('click', function () {
-            if ($(this).parent().parent().parent().find('.OT_publisher').length > 0) {
-                const btnType = $(this).data('button');
-                if (btnType == 'audio') {
-                    if ($(this).hasClass('disable')) {
-                        mC.publisher.publishAudio(true)
-                        $(this).removeClass('fa-microphone-slash')
-                        $(this).addClass('fa-microphone')
-                    } else {
-                        mC.publisher.publishAudio(false)
-                        $(this).removeClass('fa-microphone')
-                        $(this).addClass('fa-microphone-slash')
-                    }
-                    $(this).toggleClass('disable')
-                } else {
-                    if ($(this).hasClass('disable')) {
-                        mC.publisher.publishVideo(true)
-                        // $(this).removeClass('fa-video-slash')
-                        // $(this).addClass('fa-video')
-                    } else {
-                        mC.publisher.publishVideo(false)
-                        // $(this).removeClass('fa-camera')
-                        // $(this).addClass('fa-video-slash')
-                    }
-                    $(this).toggleClass('disable')
-                }
-            }
-        })
-        const onLayoutSelect = function (layoutSelected) {
-            if (layoutSelected == '1') {
-                $('#box2').hide();
-                $('.container2').hide();
-            } else if (layoutSelected == '1x1') {
-                $('#box2').show();
-                $('.container2').hide();
-            } else if (layoutSelected == '2x2') {
-                $('#box2').show();
-                $('.container2').show();
-            }
-            updateLayout(layoutSelected);
-        }
-        const layoutSelected = sessionStorage.getItem('layout') || '2x2';
-        onLayoutSelect(layoutSelected);
-        $('#layout-dd .layout-list li').on('click', function () {
-            const opt = $(this).data('option')
-            console.log(opt)
-            onLayoutSelect(opt);
-        })
-
-        $('#toggleRightBar').on('click', function () {
-            if ($('.rightbar').hasClass('close')) {
-                $('.rightbar').addClass('close')
-                $(this).attr('src', 'images/ic-panel-close.svg')
-            } else {
-                $('.rightbar').addClass('remove')
-
-                $(this).attr('src', 'images/ic-panel-open.svg')
-            }
-            $('.rightbar').toggleClass('close')
-        })
-    })
-
-    updateLayout = (layout) => {
-        $.ajax({
-            url: "https://qaapp.voicevoice.com/live/demo/session",
-            type: "post",
-            "headers": {
-                "Content-Type": "application/json"
-            },
-            data: JSON.stringify({
-                layout
-            })
-        });
-    }
-</script>
 </body>
 </html>

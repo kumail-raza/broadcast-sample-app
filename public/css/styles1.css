@@ -499,6 +499,7 @@ nav button.navbar-toggle {
 }
 
 .rightbar {
+
     width: 350px;
     display: flex;
     flex-direction: column;
@@ -1003,4 +1004,7 @@ nav button.navbar-toggle {
 
 #tree .active {
     display: block;
+}
+.sidebar, .rightbar {
+    display:none!important;
 }
