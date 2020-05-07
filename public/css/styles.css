@@ -1,12 +1,18 @@
 html,
 body {
+    height: 100%;
+    margin: 0;
     box-sizing: border-box;
+}
+body{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    overflow: hidden;
 }
 
 .main-container {
-    width: 90vw;
-    height: 85vh;
-    margin: 0 auto;
+    flex: 1;
     padding: 10px;
     border: 1px solid #59c9e3;
     border-radius: 6px;

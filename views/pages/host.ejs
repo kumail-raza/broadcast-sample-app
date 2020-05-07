@@ -1,31 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" type="image/x-icon" href=""/>
+
+    <title>VoiceVoice - Broadcast</title>
+
     <% include ../partials/common-head %>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/1.0.0/fetch.min.js" type="text/javascript" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
-        <script src="js/util/http.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/1.0.0/fetch.min.js" type="text/javascript" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+    <script src="js/util/http.js" type="text/javascript"></script>
     <script src="js/i-common.js" type="text/javascript"></script>
     <script src="js/broadcast.js" type="text/javascript"></script>
     <script src="js/common.js" type="text/javascript"></script>
     <script src="js/host.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="fonts/fontawesome/css/font-awesome.min.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/styles1.css">
 </head>
 <body>
-    <div id="credentials" style="display:none;" data="<%= credentials %>"></div>
-    <div id="main" class="main-container">
-        <div id="videoContainer" class="video-container wrap">
-            <div id="hostDivider" class="hidden"></div>
+<div id="credentials" style="display:none;" data="<%= credentials %>"></div>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button aria-expanded="false" class="navbar-toggle collapsed" data-target="#bs-example-navbar-collapse-1"
+                    data-toggle="collapse" type="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="navbar-brand">
+                <a href="home.php" title="My Conversations">
+                    <img alt="VoiceVoice" src="images/vv-logo-sphere.svg">
+                </a>
+            </div>
+            <div class="navbar-content" style="float: left;padding: 20px;">
+                <span class="title">Broadcast</span>
+                <button id="broadcastStatus" class="btn btn-sm btn-danger"><i class="fa fa-circle"
+                                                                              aria-hidden="true"></i> Live
+                </button>
+                <button id="startStop" class="btn btn-sm btn-default" disabled>Start</button>
+                <select name="videoSource" class="form-control input-sm" style="width:100px;display: inline-block;">
+                    <option value="webcam" selected="">Webcam</option>
+                    <option value="screen">Screen</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="collapse navbar-collapse" id="layout-dd">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown" style="display:none;">
+                    <a href="javascript:void(0)" class="dropdown-toggle user" data-toggle="dropdown" role="button"
+                       aria-haspopup="true"
+                       aria-expanded="false">
+                        <span class="caption">Layout</span><img src="images/ic-grid2x2.svg" style=""><span
+                                class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu layout-list">
+                        <li data-option="1">[]</li>
+                        <li data-option="1x1"><img src="images/ic-grid1x1.svg"></li>
+                        <li data-option="2x2"><img src="images/ic-grid2x2.svg"></li>
+                        <li data-option="3x1" class="disable"><img src="images/ic-grid3x1.svg"></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="javascript:void(0)" class="dropdown-toggle user" data-toggle="dropdown" role="button"
+                       aria-haspopup="true"
+                       aria-expanded="false"><i class="fa fa-user-circle-o"></i> <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a>Kumail Raza</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="javascript:void(0)">Leave</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+<div class="main-container">
+    <div class="sidebar">
+        <div class="nav nav-pills">
+            <div>
+                <button class="active">
+                    <img src="images/ic-antenna.svg">
+                </button>
+            </div>
+            <div>
+                <i class="fa fa-users fa-6" style="font-size: 24px; color: #ced2d6; margin: 14px;"></i>
+            </div>
         </div>
     </div>
-    <div class="broadcast-controls-container">
-        <select name="videoSource">
-            <option value="webcam" selected>Webcam</option>
-            <option value="screen">Screen</option>
-        </select>
-        <button id="startStop" class="btn-broadcast hidden">Start Broadcast</button>
-        <button id="inviteBtn" class="btn-broadcast">Invites</button>
-    </div>
-</body>
+    <div class="main-content two-two">
+                <div class="broadcast-controls-container">
+                    <input id="userId" type="text"/>
+                    <button id="inviteParticipant" class="btn-broadcast">Invite</button>
+                    <button id="disconnectParticipant" class="btn-broadcast">Disconnect Participant</button>
+                </div>
 
+        <div class="box-container">
+        </div>
+    </div>
+    <div class="rightbar close">
+        <div class="header">
+            <span class="text" style="font-size: 16px;font-weight: bold">Next Up...</span> <img id="toggleRightBar"
+                                                                                                src="images/ic-panel-open.svg"
+                                                                                                style="float: right;cursor:pointer;"/>
+        </div>
+        <div class="content">
+            <div class="resources">
+                <div class="resource">
+                </div>
+                <div class="resource">
+                </div>
+                <div class="resource">
+                </div>
+                <div class="resource">
+                </div>
+                <div class="resource">
+                </div>
+                <div class="resource">
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#newSourceModal" data-keyboard="false">Add
+                New Source
+            </button>
+        </div>
+    </div>
+</div>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid text-center">
+        <div style="padding: 20px;">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#newSourceModal" data-keyboard="false">Add
+                New Source
+            </button>
+        </div>
+    </div>
+</nav>
+<!-- Modal -->
+<div class="modal fade" id="newSourceModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Add New Source</h3>
+            </div>
+            <div class="modal-body">
+                <div class="k-tab-container">
+                    <div class="k-tabs">
+                        <ul>
+                            <li data-value="embed">Embed</li>
+                            <li data-value="webcam" class="active">Webcam</li>
+                            <li data-value="screen">Screenshare</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="k-tab-webcam">
+                            <div id="tree" class="left">
+                                <ul></ul>
+                            </div>
+                            <div class="right">
+                                working ...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Add New Source</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal" id="nameModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Enter your name</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Host Name: </label>
+                    <input type="text" class="form-control" id="userName"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="nameModalSaveBtn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Site scripts placed at the end of the document so the pages load faster -->
+<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+</body>
 </html>
