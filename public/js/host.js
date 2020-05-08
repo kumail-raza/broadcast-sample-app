@@ -3,17 +3,6 @@
     let broadcastHandler;
 
     /**
-     * Get our OpenTok API Key, Session ID, and Token from the JSON embedded
-     * in the HTML.
-     */
-    var getCredentials = function () {
-        var el = document.getElementById('credentials');
-        var credentials = JSON.parse(el.getAttribute('data'));
-        el.remove();
-        return credentials;
-    };
-
-    /**
      * Set the state of the broadcast and update the UI
      */
     var updateStatus = function (status) {
@@ -62,23 +51,6 @@
                 "Content-Type": "application/json"
             },
             "data": JSON.stringify({"conversationId": conversationId, "type": type, "status": status}),
-            "success": (res) => console.log(res)
-        };
-
-        $.ajax(settings).done(function (response) {
-            console.log(response);
-        });
-    }
-
-    var connectDisconnectParticipant = function (userId, status) {
-        var settings = {
-            "url": "https://dev-pc.voicevoice.com/cmserver/api/inviteParticipateInBroadcast",
-            "method": "POST",
-            "timeout": 0,
-            "headers": {
-                "Content-Type": "application/json"
-            },
-            "data": JSON.stringify({"userId": userId, "status": status}),
             "success": (res) => console.log(res)
         };
 
@@ -140,15 +112,26 @@
         };
         icHandler.onStreamCreated = function (event) {
             broadcast.streams++;
-
+            if (broadcast.streams > 1) {
+                document.querySelector('.box-container').classList.add('wrap')
+            }
             window.mE = event;
-            const container = createBox();
+
+            let container;
+            // if (($("#newSourceModal").data('bs.modal') || {}).isShown)
+            //     container = 'vidContainer001';
+            // else
+                container = createBox();
             vvOT.subscribe(container, event.stream, {insertMode: 'after'});
 
             localStorage.setItem('tab-count', broadcast.streams);
         }
         icHandler.onStreamDestroyed = function () {
             broadcast.streams--;
+
+            if (broadcast.streams < 2) {
+                document.querySelector('.box-container').classList.remove('wrap')
+            }
             localStorage.setItem('tab-count', broadcast.streams);
         }
         icHandler.onBroadcastStart = function () {
@@ -190,4 +173,13 @@
     };
 
     document.addEventListener('DOMContentLoaded', init);
+
+    // document.addEventListener('DOMContentLoaded', init);
+    window.onbeforeunload = () => {
+        console.log('closing')
+        $.ajax({
+            url: "https://qaapp.voicevoice.com/live/demo/session",
+            type: "delete"
+        });
+    }
 }());

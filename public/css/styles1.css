@@ -579,17 +579,25 @@ nav button.navbar-toggle {
     flex: 1;
     display: flex;
     flex-direction: row;
+}
+
+.main-content.two-two .box-container.wrap {
     flex-wrap: wrap;
 }
 
-.main-content.two-two .box {
+.main-content.two-two .box-container .box {
     margin: 5px;
     display: flex;
     background: #fff;
     position: relative;
     flex-direction: column;
+    flex-basis: 100%;
+}
+
+.main-content.two-two .box-container.wrap .box {
     flex-basis: calc(50% - 10px);
 }
+
 
 .main-content .name {
     position: absolute;
@@ -890,7 +898,7 @@ nav button.navbar-toggle {
 /* Loading spinner end */
 .k-tab-container {
     border: 1px solid #e2e2e2;
-        margin: 10px;
+    margin: 10px;
 }
 
 .k-tabs {
@@ -904,7 +912,7 @@ nav button.navbar-toggle {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    left: 20%;
+    left: 45%;
     top: -15px;
 }
 
@@ -953,6 +961,8 @@ nav button.navbar-toggle {
 .k-tab-webcam {
     display: flex;
     padding: 25px 15px 20px 15px;
+    min-height: 300px;
+    height: 300px;
 }
 
 .k-tab-webcam .left {
@@ -974,11 +984,26 @@ nav button.navbar-toggle {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    font-weight: bold;
 }
 
 #tree ul.nested {
     padding-left: 15px;
 }
+
+#tree ul.nested li {
+    padding: 2px 5px;
+    cursor: pointer;
+}
+
+#tree ul.nested li:hover {
+    background: #e2e2e2;
+}
+
+#tree ul.nested li.selected {
+    color: #67b168;
+}
+
 
 #tree .arrow {
     cursor: pointer;
@@ -1008,6 +1033,7 @@ nav button.navbar-toggle {
 #tree .active {
     display: block;
 }
+
 .sidebar, .rightbar {
-    display:none!important;
+    display: none !important;
 }

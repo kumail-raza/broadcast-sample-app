@@ -98,12 +98,6 @@
         </div>
     </div>
     <div class="main-content two-two">
-                <div class="broadcast-controls-container">
-                    <input id="userId" type="text"/>
-                    <button id="inviteParticipant" class="btn-broadcast">Invite</button>
-                    <button id="disconnectParticipant" class="btn-broadcast">Disconnect Participant</button>
-                </div>
-
         <div class="box-container">
         </div>
     </div>
@@ -159,9 +153,9 @@
                 <div class="k-tab-container">
                     <div class="k-tabs">
                         <ul>
-                            <li data-value="embed">Embed</li>
+                            <!--                            <li data-value="embed">Embed</li>-->
                             <li data-value="webcam" class="active">Webcam</li>
-                            <li data-value="screen">Screenshare</li>
+                            <!--                            <li data-value="screen">Screenshare</li>-->
                         </ul>
                     </div>
                     <div>
@@ -170,7 +164,7 @@
                                 <ul></ul>
                             </div>
                             <div class="right">
-                                working ...
+                                <div id="vidContainer001"></div>
                             </div>
                         </div>
                     </div>
@@ -208,5 +202,109 @@
 <!-- Site scripts placed at the end of the document so the pages load faster -->
 <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+
+    var connectDisconnectParticipant = function (userId, status) {
+        var settings = {
+            "url": "https://dev-pc.voicevoice.com/cmserver/api/inviteParticipateInBroadcast",
+            "method": "POST",
+            "timeout": 0,
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "data": JSON.stringify({"userId": userId, "status": status}),
+            "success": (res) => console.log(res)
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+        });
+    }
+    $(() => {
+        var addTree = (response) => {
+            const conversation = response.data['15'].reservationLess;
+            if (conversation) {
+                const schedule = conversation;
+                const groups = []
+                for (let group in schedule) {
+                    const users = schedule[group].map(user => {
+                        return `<li data-id="${user.id}">${user.name} (${user.id})</li>`
+                    })
+                    groups.push('<li>\n<span class="arrow">' + group + '</span>\n<ul class="nested">\n ' + users.join('\n ') + '\n</ul>\n</li>')
+                }
+                console.log(groups.join('\n'));
+                $('#tree ul').html(groups.join('\n'))
+            }
+
+
+            var toggler = document.getElementById('tree').getElementsByClassName("arrow");
+            for (let i = 0; i < toggler.length; i++) {
+                toggler[i].addEventListener("click", function () {
+                    this.parentElement.querySelector(".nested").classList.toggle("active");
+                    this.classList.toggle("arrow-down");
+                });
+            }
+            $('#tree ul.nested li').on('click', function () {
+                console.log($(this))
+                const userId = $(this).data('id');
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected')
+                    window.selectedUsers.splice(window.selectedUsers.indexOf(userId), 1)
+                    return;
+                }
+                $(this).addClass('selected')
+                window.selectedUsers = window.selectedUsers || [];
+                window.selectedUsers.push(userId);
+
+                connectDisconnectParticipant(userId, '1');
+            })
+        }
+
+        var fetchLatestState = () => {
+            if (($("#newSourceModal").data('bs.modal') || {}).isShown) {
+                return
+            }
+            $.ajax({
+                url: "https://dev-pc.voicevoice.com/cmserver/api/getServerState",
+                type: "get",
+                success: (response) => {
+                    console.log(response, undefined, 2)
+                    addTree(response)
+                }
+            });
+        }
+        setInterval(() => fetchLatestState(), 1000);
+        fetchLatestState();
+
+        $('.box .webcam-options i').on('click', function () {
+            if ($(this).parent().parent().parent().find('.OT_publisher').length > 0) {
+                const btnType = $(this).data('button');
+                if (btnType == 'audio') {
+                    if ($(this).hasClass('disable')) {
+                        mC.publisher.publishAudio(true)
+                        $(this).removeClass('fa-microphone-slash')
+                        $(this).addClass('fa-microphone')
+                    } else {
+                        mC.publisher.publishAudio(false)
+                        $(this).removeClass('fa-microphone')
+                        $(this).addClass('fa-microphone-slash')
+                    }
+                    $(this).toggleClass('disable')
+                } else {
+                    if ($(this).hasClass('disable')) {
+                        mC.publisher.publishVideo(true)
+                        // $(this).removeClass('fa-video-slash')
+                        // $(this).addClass('fa-video')
+                    } else {
+                        mC.publisher.publishVideo(false)
+                        // $(this).removeClass('fa-camera')
+                        // $(this).addClass('fa-video-slash')
+                    }
+                    $(this).toggleClass('disable')
+                }
+            }
+        })
+    })
+</script>
 </body>
 </html>

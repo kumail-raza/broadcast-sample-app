@@ -21,14 +21,14 @@ const defaultSessionOptions = { mediaMode: 'routed' };
  * Returns options for token creation based on user type
  * @param {String} userType Host, guest, or viewer
  */
-const tokenOptions = (userType) => {
-  const role = {
-    host: 'moderator',
-    guest: 'publisher',
-    viewer: 'subscriber',
-  }[userType];
+const tokenOptions = (user) => {
+    const role = {
+        host: 'moderator',
+        presenter: 'publisher',
+        viewer: 'subscriber',
+    }[user.userType];
 
-  return { role };
+    return {role, data: JSON.stringify(user)};
 };
 
 /**
@@ -36,26 +36,31 @@ const tokenOptions = (userType) => {
  * @param {Object} [options]
  * @returns {Promise} <Resolve => {Object}, Reject => {Error}>
  */
-let activeSession;
-const createSession = options =>
-  new Promise((resolve, reject) => {
-    const setActiveSession = (session) => {
-      activeSession = session;
-      return Promise.resolve(session);
-    };
+let sessions = {};
+const createSession = (conversationId, options) =>
+    new Promise((resolve, reject) => {
+        const setActiveSession = (session) => {
+            if(!sessions.hasOwnProperty(conversationId)) {
+                conversation[conversationId] = {}
+            }
+            sessions[conversationId].activeSession = session;
+            return Promise.resolve(session);
+        };
 
-    OT.createSessionAsync(R.defaultTo(defaultSessionOptions)(options))
-      .then(setActiveSession)
-      .then(resolve)
-      .catch(reject);
-  });
+        OT.createSessionAsync(R.defaultTo(defaultSessionOptions)(options))
+            .then(setActiveSession)
+            .then(resolve)
+            .catch(reject);
+    });
 
 /**
  * Create an OpenTok token
  * @param {String} userType Host, guest, or viewer
  * @returns {String}
  */
-const createToken = userType => OT.generateToken(activeSession.sessionId, tokenOptions(userType));
+const createToken = (conversationId, user) => {
+   return OT.generateToken(sessions[conversationId].activeSession.sessionId, tokenOptions(user));
+}
 
 /** Exports */
 
@@ -63,25 +68,23 @@ const createToken = userType => OT.generateToken(activeSession.sessionId, tokenO
  * Creates an OpenTok session and generates an associated token
  * @returns {Promise} <Resolve => {Object}, Reject => {Error}>
  */
-const getCredentials = userType =>
-  new Promise((resolve, reject) => {
-    if (activeSession) {
-      const token = createToken(userType);
-      resolve({ apiKey, sessionId: activeSession.sessionId, token });
-    } else {
-
-      const addToken = (session) => {
-        const token = createToken(userType);
-        return Promise.resolve({ apiKey, sessionId: session.sessionId, token });
-      };
-
-      createSession()
-        .then(addToken)
-        .then(resolve)
-        .catch(reject);
-    }
-  });
+const getCredentials = (conversationId, user) =>
+    new Promise((resolve, reject) => {
+        if (conversation.hasOwnProperty(conversationId) && conversation[conversationId].activeSession) {
+            const token = createToken(conversationId, user);
+            resolve({apiKey, sessionId: conversation[conversationId].activeSession.sessionId, token});
+        } else {
+            const addToken = (session) => {
+                const token = createToken(conversationId, user);
+                return Promise.resolve({apiKey, sessionId: session.sessionId, token});
+            };
+            createSession(conversationId)
+                .then(addToken)
+                .then(resolve)
+                .catch(reject);
+        }
+    });
 
 module.exports = {
-  getCredentials
+    getCredentials
 };
