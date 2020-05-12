@@ -65,6 +65,7 @@ const createToken = (conversationId, user) => {
  */
 const getCredentials = (conversationId, user) =>
     new Promise((resolve, reject) => {
+        conversationId = conversationId .toLowerCase();
         if (sessions.hasOwnProperty(conversationId) && sessions[conversationId].activeSession) {
             const token = createToken(conversationId, user);
             resolve({apiKey, sessionId: sessions[conversationId].activeSession.sessionId, token});
