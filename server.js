@@ -7,7 +7,7 @@ const R = require('ramda');
  */
 const app = express();
 const port = process.env.PORT || 8082;
-app.use('/', express.static(`${__dirname}/public`));
+app.use('/live', express.static(`${__dirname}/public`));
 app.use(bodyParser.json());
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
