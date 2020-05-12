@@ -38,7 +38,7 @@
             if (selectedOption === 'screen') {
                 properties.videoSource = 'screen';
             }
-            const container = createBox();
+            const container = createBox(vvOT);
             vvOT.publishOwnStreams(container, properties);
         })
     }
@@ -63,38 +63,41 @@
         });
     }
 
-    var attachBoxEvent = function () {
-        const box = `#${(this).data('boxId')}`;
+    var attachBoxEvent = function (el, vvOT) {
+        const box = `#${$(el).data('boxid')}`;
+        console.log(box);
         if ($(box).find('.OT_publisher').length > 0) {
             const publisherId = $(box).find('.OT_publisher').attr('id')
-            const btnType = $(this).data('button');
+            const btnType = $(el).data('button');
             if (btnType == 'audio') {
-                if ($(this).hasClass('disable')) {
-                    vvOT.publisher.publishAudio(true)
-                    $(this).removeClass('fa-microphone-slash')
-                    $(this).addClass('fa-microphone')
+                if ($(el).hasClass('disable')) {
+                    vvOT.togglePublisherMedia(publisherId, btnType, true)
+                    $(el).removeClass('fa-microphone-slash')
+                    $(el).addClass('fa-microphone')
                 } else {
-                    mC.publisher.publishAudio(false)
-                    $(this).removeClass('fa-microphone')
-                    $(this).addClass('fa-microphone-slash')
+                    vvOT.togglePublisherMedia(publisherId, btnType, false)
+                    $(el).removeClass('fa-microphone')
+                    $(el).addClass('fa-microphone-slash')
                 }
-                $(this).toggleClass('disable')
+                $(el).toggleClass('disable')
             } else {
-                if ($(this).hasClass('disable')) {
-                    // mC.publisher.publishVideo(true)
-                    // $(this).removeClass('fa-video-slash')
-                    // $(this).addClass('fa-video')
+                if ($(el).hasClass('disable')) {
+                    vvOT.togglePublisherMedia(publisherId, btnType, true)
+                    $(el).css('color', 'rgba(255,255,255)')
+                    // $(el).removeClass('fa-video-slash')
+                    // $(el).addClass('fa-video')
                 } else {
-                    // mC.publisher.publishVideo(false)
-                    // $(this).removeClass('fa-camera')
-                    // $(this).addClass('fa-video-slash')
+                    $(el).css('color', 'rgb(255,255,255, .5)')
+                    vvOT.togglePublisherMedia(publisherId, btnType, false)
+                    // $(el).removeClass('fa-camera')
+                    // $(el).addClass('fa-video-slash')
                 }
-                $(this).toggleClass('disable')
+                $(el).toggleClass('disable')
             }
         }
     }
 
-    var createBox = () => {
+    var createBox = (vvOT) => {
         let boxId = getNextAvailableBox();
         if (!getNextAvailableBox()) {
             boxId = $('.box-container').children().length + 1;
@@ -111,8 +114,8 @@
                         <li data-value="screen"><a href="javascript:void(0)">ScreenShare</a></li>
                     </ul>
                     <div class="webcam-options enable">
-                        <i aria-hidden="true" class="fa fa-video-camera icons-conf" data-button="video" data-box="box${boxId}"></i>
-                        <i aria-hidden="true" class="fa fa-microphone icons-conf" data-button="audio" data-box="box${boxId}"></i>
+                        <i aria-hidden="true" class="fa fa-video-camera icons-conf" data-button="video" data-boxId="box${boxId}"></i>
+                        <i aria-hidden="true" class="fa fa-microphone icons-conf" data-button="audio" data-boxId="box${boxId}"></i>
                     </div>
                 </div>
                 <div id="vidContainer${boxId}" class="video-holder"></div>
@@ -120,7 +123,10 @@
             </div>`)
             $('.box-container').append(box);
 
-            // $(`#box${boxId} .webcam-options i`).on('click', attachBoxEvent(vvOT))
+            $(`#box${boxId} .webcam-options i`).on('click', function () {
+                console.log($(this).data('boxid'))
+                attachBoxEvent(this, vvOT)
+            })
         }
         return 'vidContainer' + boxId;
     }
@@ -142,7 +148,7 @@
                     name: mySearchParams.get('name') || 'Host',
                     insertMode: 'before',
                 };
-                const container = createBox();
+                const container = createBox(vvOT);
                 vvOT.publishOwnStreams(container, properties);
 
                 attachDOMEvents(vvOT);
@@ -160,7 +166,7 @@
             // if (($("#newSourceModal").data('bs.modal') || {}).isShown)
             //     container = 'vidContainer001';
             // else
-            container = createBox();
+            container = createBox(vvOT);
 
             vvOT.subscribe(container, event.stream, {insertMode: 'after'});
             $(`#${container}`).siblings('.name').text(event.stream.name)

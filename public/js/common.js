@@ -108,8 +108,22 @@ const vvOpenTok = function () {
         addPublisherControls(publisher);
         publishers.set(publisher.id, publisher)
 
-        window.mPs = publishers ;
+        window.mPs = publishers;
     };
+
+    this.togglePublisherMedia = (id, type, value) => {
+        const publisher = publishers.get(id);
+        if(!publisher) {
+            console.log('pu lisher not found')
+            return;
+        }
+        window.mP  = publisher;
+        if (type == 'audio') {
+            publisher.publishAudio(value)
+        } else if (type == 'video') {
+            publisher.publishVideo(value)
+        }
+    }
 
     this.unpublishStream = function (id) {
         session.unpublish(publishers.get(id));
