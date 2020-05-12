@@ -161,9 +161,9 @@ const vvOpenTok = function () {
     this.connect = function (props, credentials) {
         var credentials = credentials || getCredentials();
         session = OT.initSession(credentials.apiKey, credentials.sessionId, props);
-        session.connect(credentials.token, function () {
+        session.connect(credentials.token, function (err) {
             if (mHandler.onConnect)
-                mHandler.onConnect();
+                mHandler.onConnect(session,err);
         });
         window.myS = session;
     };

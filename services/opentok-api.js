@@ -3,19 +3,14 @@
 /* eslint-env es6 */
 
 /** Config */
-const { apiKey, apiSecret } = require('../config');
+const {apiKey, apiSecret} = require('../config');
 
 /** Imports */
-const R = require('ramda');
 const Promise = require('bluebird');
 const OpenTok = require('opentok');
 
 // http://bluebirdjs.com/docs/api/promisification.html
 const OT = Promise.promisifyAll(new OpenTok(apiKey, apiSecret));
-
-/** Private */
-
-const defaultSessionOptions = { mediaMode: 'routed' };
 
 /**
  * Returns options for token creation based on user type
@@ -40,14 +35,14 @@ let sessions = {};
 const createSession = (conversationId, options) =>
     new Promise((resolve, reject) => {
         const setActiveSession = (session) => {
-            if(!sessions.hasOwnProperty(conversationId)) {
-                conversation[conversationId] = {}
+            if (!sessions.hasOwnProperty(conversationId)) {
+                sessions[conversationId] = {}
             }
             sessions[conversationId].activeSession = session;
             return Promise.resolve(session);
         };
 
-        OT.createSessionAsync(R.defaultTo(defaultSessionOptions)(options))
+        OT.createSessionAsync({mediaMode: 'routed'})
             .then(setActiveSession)
             .then(resolve)
             .catch(reject);
@@ -59,7 +54,7 @@ const createSession = (conversationId, options) =>
  * @returns {String}
  */
 const createToken = (conversationId, user) => {
-   return OT.generateToken(sessions[conversationId].activeSession.sessionId, tokenOptions(user));
+    return OT.generateToken(sessions[conversationId].activeSession.sessionId, tokenOptions(user));
 }
 
 /** Exports */
@@ -70,9 +65,9 @@ const createToken = (conversationId, user) => {
  */
 const getCredentials = (conversationId, user) =>
     new Promise((resolve, reject) => {
-        if (conversation.hasOwnProperty(conversationId) && conversation[conversationId].activeSession) {
+        if (sessions.hasOwnProperty(conversationId) && sessions[conversationId].activeSession) {
             const token = createToken(conversationId, user);
-            resolve({apiKey, sessionId: conversation[conversationId].activeSession.sessionId, token});
+            resolve({apiKey, sessionId: sessions[conversationId].activeSession.sessionId, token});
         } else {
             const addToken = (session) => {
                 const token = createToken(conversationId, user);
@@ -86,5 +81,6 @@ const getCredentials = (conversationId, user) =>
     });
 
 module.exports = {
-    getCredentials
+    getCredentials,
+    getSessions : () => sessions
 };

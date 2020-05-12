@@ -36,7 +36,7 @@
         const props = {connectionEventsSuppressed: true};
         const vvOT = new vvOpenTok();
         const icHandler = new IOpenTok();
-        icHandler.onConnect = function (error) {
+        icHandler.onConnect = function (session, error) {
             if (error) {
                 console.log(error);
             } else {
@@ -46,7 +46,11 @@
                     name: mySearchParams.get('name') || 'Guest',
                     insertMode: 'after'
                 };
-                vvOT.publishOwnStreams(properties);
+                if (session.streams.length() > 3) {
+                    alert('No more room to publish, you can watch broadcast only')
+                } else {
+                    vvOT.publishOwnStreams(properties);
+                }
                 vvOT.subcribesToStreams('hostDivider');
 
                 attachDOMEvents(vvOT);

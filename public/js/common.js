@@ -1,7 +1,7 @@
 const vvOpenTok = function () {
-    let publisher;
     let session;
     let mHandler;
+    const publishers = new Map();
 
     /**
      * Options for adding OpenTok publisher and subscriber video elements
@@ -9,7 +9,7 @@ const vvOpenTok = function () {
     var insertOptions = {
         width: '100%',
         height: '100%',
-        showControls: true
+        showControls: false
     };
 
     /**
@@ -27,10 +27,10 @@ const vvOpenTok = function () {
     /**
      * Subscribe to a stream
      */
-    this.subscribe = function (containerDiv, stream, props) {
+    this.subscribe = function (container, stream, props) {
         var name = stream.name;
         var properties = {name, ...insertOptions, ...props};
-        const subcriber = session.subscribe(stream, containerDiv, properties, function (error) {
+        const subcriber = session.subscribe(stream, container, properties, function (error) {
             if (error) {
                 console.log(error);
             }
@@ -38,12 +38,6 @@ const vvOpenTok = function () {
         addSubscriberControls(subcriber.id);
     };
 
-    /**------------------------------
-     * Toggle publishing audio/video to allow host to mute
-     * their video (publishVideo) or audio (publishAudio)
-     * @param {Object} publisher The OpenTok publisher object
-     * @param {Object} el The DOM element of the control whose id corresponds to the action
-     */
     var toggleMedia = function (publisher, el) {
         var enabled = el.classList.contains('disabled');
         el.classList.toggle('disabled');
@@ -104,25 +98,21 @@ const vvOpenTok = function () {
         });
     };
 
-    /**
-     * The host starts publishing and signals everyone else connected to the
-     * session so that they can start publishing and/or subscribing.
-     * @param {Object} session The OpenTok session
-     * @param {Object} publisher The OpenTok publisher object
-     */
     this.publishOwnStreams = function (container, props) {
         var properties = {...props, ...insertOptions};
-        publisher = OT.initPublisher(container, properties);
+        const publisher = OT.initPublisher(container, properties);
         session.publish(publisher, function () {
             if (mHandler.onStreamPublished)
-                mHandler.onStreamPublished();
+                mHandler.onStreamPublished(publisher, container);
         });
         addPublisherControls(publisher);
+        publishers.set(publisher.id, publisher)
+
+        window.mPs = publishers ;
     };
 
-    this.unpublishStream = function () {
-        session.unpublish(publisher);
-        publisher = null;
+    this.unpublishStream = function (id) {
+        session.unpublish(publishers.get(id));
     }
 
     this.enableBroadcastListener = function (container) {
@@ -136,9 +126,9 @@ const vvOpenTok = function () {
     this.connect = function (props, credentials) {
         var credentials = credentials || getCredentials();
         session = OT.initSession(credentials.apiKey, credentials.sessionId, props);
-        session.connect(credentials.token, function () {
+        session.connect(credentials.token, function (error) {
             if (mHandler.onConnect)
-                mHandler.onConnect();
+                mHandler.onConnect(session, error);
 
             setEventListeners();
         });

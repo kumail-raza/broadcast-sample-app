@@ -32,7 +32,7 @@
         const props = {connectionEventsSuppressed: true};
         const vvOT = new vvOpenTok();
         const icHandler = new IOpenTok();
-        icHandler.onConnect = function (error) {
+        icHandler.onConnect = function (session, error) {
             if (error) {
                 console.log(error);
             } else {
