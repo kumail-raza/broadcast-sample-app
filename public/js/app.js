@@ -16,7 +16,7 @@ var getFromSession = (sessionKey, field) => {
 var getToken = (id, name, type) => {
     return new Promise(function (resolve, reject) {
         $.ajax({
-            url: `https://dev-pc.voicevoice.com/live/${getFromSession('conversation', 'id')}/accessToken`,
+            url: `https://dev-pc.voicevoice.com/live/${getFromSession('conversation', 'stringId')}/accessToken`,
             type: "post",
             "headers": {
                 "Content-Type": "application/json"
