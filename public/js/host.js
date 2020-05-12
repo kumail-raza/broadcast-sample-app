@@ -45,13 +45,17 @@
 
     var sendBroadcastStatusToClient = (conversationId, type, status) => {
         var settings = {
-            "url": "https://dev-pc.voicevoice.com/cmserver/api/startStopBroadcast",
+            "url": `${baseURL}/cmserver/api/startStopBroadcast`,
             "method": "POST",
             "timeout": 0,
             "headers": {
                 "Content-Type": "application/json"
             },
-            "data": JSON.stringify({"conversationId": getFromSession('conversation', 'id'), "type": type, "status": status})
+            "data": JSON.stringify({
+                "conversationId": getFromSession('conversation', 'id'),
+                "type": type,
+                "status": status
+            })
         };
 
         $.ajax(settings).done(function (response) {
@@ -194,17 +198,17 @@
 
     window.onbeforeunload = () => {
         console.log('closing')
-        $.ajax({
-            url: `https://qaapp.voicevoice.com/live/${getFromSession('conversation', 'id')}/session`,
-            type: "delete"
-        });
+        // $.ajax({
+        //     url: `${baseURL}/live/${getFromSession('conversation', 'id')}/session`,
+        //     type: "delete"
+        // });
     }
 
     // ====
 
     var connectDisconnectParticipant = function (userId, status) {
         var settings = {
-            "url": "https://dev-pc.voicevoice.com/cmserver/api/inviteParticipantInBroadcast",
+            "url": `${baseURL}/cmserver/api/inviteParticipantInBroadcast`,
             "method": "POST",
             "timeout": 0,
             "headers": {
@@ -276,7 +280,7 @@
             return
         }
         $.ajax({
-            url: "https://dev-pc.voicevoice.com/cmserver/api/getServerState",
+            url: `${baseURL}/cmserver/api/getServerState`,
             type: "get",
             success: (response) => {
                 delete response.data.UFO;

@@ -1,3 +1,5 @@
+var baseURL = 'https://qaapp.voicevoice.com'
+
 const getNextAvailableBox = function () {
     const availableBox = $('.box').toArray().filter(function (i) {
         var occupied = $('#' + i.id).find('[class*="OT_root"]').length > 0;
@@ -16,7 +18,7 @@ var getFromSession = (sessionKey, field) => {
 var getToken = (id, name, type) => {
     return new Promise(function (resolve, reject) {
         $.ajax({
-            url: `https://dev-pc.voicevoice.com/live/${getFromSession('conversation', 'stringId')}/accessToken`,
+            url: `${baseURL}/live/${getFromSession('conversation', 'stringId')}/accessToken`,
             type: "post",
             "headers": {
                 "Content-Type": "application/json"
