@@ -17,7 +17,7 @@ const vvOpenTokBroadcast = new function () {
             if (error) {
                 console.log(['signal error (', error.code, '): ', error.message].join(''));
             } else {
-                console.log('signal sent');
+                console.log('signal sent', status, to);
                 if (status === 'active')
                     mHandler.onBroadcastStart();
                 else

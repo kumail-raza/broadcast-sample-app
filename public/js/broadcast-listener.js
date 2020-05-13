@@ -35,17 +35,20 @@ const vvOpenTokBroadcastListener = new function () {
         });
     };
 
+
+    var broadcastActive = false;
     /**
      * Listen for events on the OpenTok session
      */
     var setEventListeners = function () {
         var streams = [];
         var subscribers = [];
-        var broadcastActive = false;
 
         /** Subscribe to new streams as they are published */
         session.on('streamCreated', function (event) {
             streams.push(event.stream);
+
+            console.log(`streamcreated > broadcastActive - ${broadcastActive}`)
             if (broadcastActive) {
                 subscribers.push(subscribe(mContainerDiv, event.stream));
             }
@@ -60,6 +63,8 @@ const vvOpenTokBroadcastListener = new function () {
         session.on('signal:broadcast', function (event) {
             var status = event.data;
             broadcastActive = status === 'active';
+
+            console.log(`signal > broadcastActive - ${broadcastActive}`)
             if (status === 'active') {
                 streams.forEach(function (stream) {
                     subscribers.push(subscribe(mContainerDiv, stream));

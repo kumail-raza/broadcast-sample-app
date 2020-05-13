@@ -43,7 +43,7 @@
         })
     }
 
-    var sendBroadcastStatusToClient = (conversationId, type, status) => {
+    var sendBroadcastStatusToClient = (type, status) => {
         var settings = {
             "url": `${baseURL}/cmserver/api/startStopBroadcast`,
             "method": "POST",

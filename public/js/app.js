@@ -1,4 +1,4 @@
-var baseURL = 'https://qaapp.voicevoice.com'
+var baseURL = 'https://dev-pc.voicevoice.com'
 
 const getNextAvailableBox = function () {
     const availableBox = $('.box').toArray().filter(function (i) {
