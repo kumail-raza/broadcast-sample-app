@@ -20,8 +20,12 @@ const memory = require('./services/memory')
  */
 
 app.post('/:conversationId/accessToken', (req, res) => {
+    const cache = memory.getCache(req.params.conversationId);
+
     opentok.getCredentials(req.params.conversationId, req.body.user)
-        .then(credentials => res.json(credentials))
+        .then(credentials => {
+            res.json({...credentials, broadcastStatus: cache ? cache.broadcastStatus : null})
+        })
         .catch(error => res.status(500).send(error));
 });
 
@@ -29,6 +33,14 @@ app.get('/:conversationId/viewer', (req, res) => {
     opentok.getCredentials(req.params.conversationId, {userType: 'viewer'})
         .then(credentials => res.render('pages/viewer', {credentials: JSON.stringify(credentials)}))
         .catch(error => res.status(500).send(error));
+});
+
+
+app.get('/cache', async (req, res) => {
+    // let u = await redis.hgetall('user:1778')
+    // u.id = Number(u.id)
+
+    res.status(200).json({cache: ''})
 });
 
 
@@ -77,6 +89,12 @@ app.get('/:conversationId/guest', (req, res) => {
         .catch(error => res.status(500).send(error));
 });
 app.get('/:conversationId/presenter', (req, res) => {
+    opentok.getCredentials(req.params.conversationId, {userType: 'guest'})
+        .then(credentials => res.render('pages/guest', {credentials: JSON.stringify(credentials)}))
+        .catch(error => res.status(500).send(error));
+});
+
+app.get('/:conversationId/presenter1', (req, res) => {
     res.render('pages/presenter', {credentials: '{}'})
 });
 

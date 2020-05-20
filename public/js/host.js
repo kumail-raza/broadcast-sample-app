@@ -44,6 +44,17 @@
     }
 
     var sendBroadcastStatusToClient = (type, status) => {
+        $.ajax({
+            url: `${baseURL}/live/${getFromSession('conversation', 'stringId')}/session`,
+            type: "post",
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            data: JSON.stringify({
+                broadcastStatus: status
+            })
+        });
+
         var settings = {
             "url": `${baseURL}/cmserver/api/startStopBroadcast`,
             "method": "POST",
@@ -193,10 +204,10 @@
                 broadcastHandler = vvOT.enableBroadcast();
             }
             if (broadcast.status === 'waiting') {
-                sendBroadcastStatusToClient(15, 'reservationLess', '1')
+                sendBroadcastStatusToClient('reservationLess', '1')
                 broadcastHandler.startBroadcast();
             } else if (broadcast.status === 'active') {
-                sendBroadcastStatusToClient(15, 'reservationLess', '0')
+                sendBroadcastStatusToClient('reservationLess', '0')
                 broadcastHandler.endBroadcast();
             }
         });
@@ -204,10 +215,10 @@
 
     window.onbeforeunload = () => {
         console.log('closing')
-        // $.ajax({
-        //     url: `${baseURL}/live/${getFromSession('conversation', 'id')}/session`,
-        //     type: "delete"
-        // });
+        $.ajax({
+            url: `${baseURL}/live/${getFromSession('conversation', 'stringId')}/session`,
+            type: "delete"
+        });
     }
 
     // ====
@@ -272,15 +283,10 @@
         })
     }
 
-    var ifConversationIsOnGoing = () => {
-        getToken('132', 'Kumail', 'host').then(res => {
-            init(res)
-        })
-    }
-
     var conversationStringId = location.href.replace(/(https.*.com\/live\/)/, '')
 
     var alreadyConnectedToTokBox = false;
+
     var fetchLatestState = () => {
         if (($("#newSourceModal").data('bs.modal') || {}).isShown) {
             return
@@ -312,10 +318,18 @@
 
                         if (!alreadyConnectedToTokBox) {
                             getToken('132', 'Kumail', 'host').then(res => {
+                                if (res.broadcastStatus === '1') {
+                                    broadcast.status = res.broadcastStatus === '1' ? 'active' : '-';
+                                    var startStopButton = document.getElementById('startStop');
+                                    document.getElementById('broadcastStatus').classList.remove('btn-danger')
+                                    document.getElementById('broadcastStatus').classList.add('btn-success')
+                                    startStopButton.classList.add('active');
+                                    startStopButton.innerHTML = 'End Broadcast';
+                                }
                                 $('#error').css('display', 'none')
                                 $('.box-container').css('display', 'flex')
-                                init(res)
                                 alreadyConnectedToTokBox = true;
+                                init(res)
                             })
                         }
                     }
@@ -323,6 +337,22 @@
             }
         });
     }
+
     setInterval(() => fetchLatestState(), 10000);
+
     fetchLatestState();
+    getToken('132', 'Kumail', 'host').then(res => {
+        if (res.broadcastStatus === '1') {
+            broadcast.status = res.broadcastStatus === '1' ? 'active' : '-';
+            var startStopButton = document.getElementById('startStop');
+            document.getElementById('broadcastStatus').classList.remove('btn-danger')
+            document.getElementById('broadcastStatus').classList.add('btn-success')
+            startStopButton.classList.add('active');
+            startStopButton.innerHTML = 'End Broadcast';
+        }
+        $('#error').css('display', 'none')
+        $('.box-container').css('display', 'flex')
+        alreadyConnectedToTokBox = true;
+        init(res)
+    })
 })(window, jQuery);

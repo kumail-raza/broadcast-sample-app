@@ -11,8 +11,10 @@ const vvOpenTokBroadcast = new function () {
      * @param {Object} [to] - An OpenTok connection object
      */
     const signal = function (to) {
+        // to == null means send to all
+        // sending repsonse of braodcast status called
         var signalData = Object.assign({}, {type: 'broadcast', data: status}, to ? {to} : {});
-        console.log('signal', JSON.stringify(signalData));
+        console.log('send >> signal:broadcast ', JSON.stringify(signalData));
         session.signal(signalData, function (error) {
             if (error) {
                 console.log(['signal error (', error.code, '): ', error.message].join(''));
@@ -36,7 +38,7 @@ const vvOpenTokBroadcast = new function () {
      */
     const startBroadcast = function (session, to) {
         status = 'active';
-        signal(to);
+        signal(null);
     };
 
     /**
@@ -45,7 +47,7 @@ const vvOpenTokBroadcast = new function () {
      */
     const endBroadcast = function (session, to) {
         status = 'ended'
-        signal(to);
+        signal(null);
     };
 
     this.init = function (OTSession) {
@@ -53,6 +55,7 @@ const vvOpenTokBroadcast = new function () {
 
         // Signal the status of the broadcast when requested
         session.on('signal:broadcast', function (event) {
+            console.log('recv >> signal:broadcast', event.data)
             if (event.data === 'status') {
                 signal(event.from);
             }

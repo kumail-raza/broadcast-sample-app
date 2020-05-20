@@ -14,6 +14,7 @@ const vvOpenTokBroadcastListener = new function () {
 
     /** Ping the host to see if the broadcast has started */
     var checkBroadcastStatus = function () {
+        console.log('send >> signal:broadcast > checkBroadcastStatus')
         session.signal({
             type: 'broadcast',
             data: 'status'
@@ -27,7 +28,7 @@ const vvOpenTokBroadcastListener = new function () {
     var subscribe = function (containerDiv, stream) {
         var name = stream.name;
         var insertMode = name === 'Host' ? 'before' : 'after';
-        var properties = { name, insertMode, ...insertOptions };
+        var properties = {name, insertMode, ...insertOptions};
         return session.subscribe(stream, containerDiv, properties, function (error) {
             if (error) {
                 console.log(error);
@@ -62,9 +63,14 @@ const vvOpenTokBroadcastListener = new function () {
         /** Listen for a broadcast status update from the host */
         session.on('signal:broadcast', function (event) {
             var status = event.data;
+            if (status === 'status') {
+                console.log(`recv >> status request neglect`)
+                return;
+            }
+            console.log(`recv >> signal:broadcast, resp broadcastStatus - ${status}`)
+
             broadcastActive = status === 'active';
 
-            console.log(`signal > broadcastActive - ${broadcastActive}`)
             if (status === 'active') {
                 streams.forEach(function (stream) {
                     subscribers.push(subscribe(mContainerDiv, stream));
