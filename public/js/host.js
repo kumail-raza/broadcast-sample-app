@@ -341,18 +341,4 @@
     setInterval(() => fetchLatestState(), 10000);
 
     fetchLatestState();
-    getToken('132', 'Kumail', 'host').then(res => {
-        if (res.broadcastStatus === '1') {
-            broadcast.status = res.broadcastStatus === '1' ? 'active' : '-';
-            var startStopButton = document.getElementById('startStop');
-            document.getElementById('broadcastStatus').classList.remove('btn-danger')
-            document.getElementById('broadcastStatus').classList.add('btn-success')
-            startStopButton.classList.add('active');
-            startStopButton.innerHTML = 'End Broadcast';
-        }
-        $('#error').css('display', 'none')
-        $('.box-container').css('display', 'flex')
-        alreadyConnectedToTokBox = true;
-        init(res)
-    })
 })(window, jQuery);
