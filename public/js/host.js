@@ -241,18 +241,18 @@
     }
 
     var addTree = (data) => {
-        const conversation = data.reservationLess;
-        if (conversation) {
-            const schedule = conversation;
-            const groups = []
-            for (let group in schedule) {
-                const users = schedule[group].map(user => {
+        window.dataX = data;
+        const groups = {...data.reservationLess, ...data.scheduled};
+        if (groups) {
+            const items = []
+            for (let group in groups) {
+                const users = groups[group].map(user => {
                     return `<li data-id="${user.id}">${user.name} (${user.id})</li>`
                 })
-                groups.push('<li>\n<span class="arrow">' + group + '</span>\n<ul class="nested">\n ' + users.join('\n ') + '\n</ul>\n</li>')
+                items.push('<li>\n<span class="arrow">' + group + '</span>\n<ul class="nested">\n ' + users.join('\n ') + '\n</ul>\n</li>')
             }
-            console.log(groups.join('\n'));
-            $('#tree ul').html(groups.join('\n'))
+            console.log(items.join('\n'));
+            $('#tree ul').html(items.join('\n'))
         }
 
 
