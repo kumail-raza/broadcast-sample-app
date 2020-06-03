@@ -34,8 +34,10 @@
             </div>
             <div class="navbar-content" style="float: left;padding: 20px;">
                 <span class="title">Broadcast</span>
-                <button id="broadcastStatus" class="btn btn-sm btn-danger" style="cursor: unset;user-select: none;    pointer-events: none;"><i class="fa fa-circle"
-                                                                              aria-hidden="true"></i> Live
+                <button id="broadcastStatus" class="btn btn-sm btn-danger"
+                        style="cursor: unset;user-select: none;    pointer-events: none;"><i class="fa fa-circle"
+                                                                                             aria-hidden="true"></i>
+                    Live
                 </button>
                 <button id="startStop" class="btn btn-sm btn-default" disabled>Start</button>
                 <select name="videoSource" class="form-control input-sm" style="width:100px;display: inline-block;">
@@ -46,6 +48,12 @@
         </div>
         <div class="collapse navbar-collapse" id="layout-dd">
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <button class="btn btn-primary navbar-btn" data-toggle="modal" data-target="#newSourceModal"
+                            data-keyboard="false"><i class="fa fa-plus-circle"></i>&nbsp;&nbsp;Add New Source
+                    </button>
+<!--                    <span data-toggle="tooltip" data-placement="left" title="2 Hands Up"></span>-->
+                </li>
                 <li class="dropdown" style="display:none;">
                     <a href="javascript:void(0)" class="dropdown-toggle user" data-toggle="dropdown" role="button"
                        aria-haspopup="true"
@@ -76,7 +84,7 @@
     </div>
 </nav>
 <div class="main-container">
-    <div class="sidebar">
+    <div class="sidebar left">
         <div class="nav nav-pills">
             <div>
                 <button class="active">
@@ -91,46 +99,32 @@
     <div class="main-content two-two">
         <div class="box-container" style="display: none;">
         </div>
-        <div id="error" style="align-items: center;flex: 1;justify-content: center;display: flex;"><h3>No conversation is on going, right now!</h3></div>
+        <div id="error" style="align-items: center;flex: 1;justify-content: center;display: flex;"><h3>No conversation
+                is on going, right now!</h3></div>
     </div>
-    <div class="rightbar close">
+    <div class="sidebar right collapse">
         <div class="header">
-            <span class="text" style="font-size: 16px;font-weight: bold">Next Up...</span> <img id="toggleRightBar"
-                                                                                                src="images/ic-panel-open.svg"
-                                                                                                style="float: right;cursor:pointer;"/>
-        </div>
-        <div class="content">
-            <div class="resources">
-                <div class="resource">
-                </div>
-                <div class="resource">
-                </div>
-                <div class="resource">
-                </div>
-                <div class="resource">
-                </div>
-                <div class="resource">
-                </div>
-                <div class="resource">
-                </div>
+            <div class="toggleRightSidebar"></div>
+            <div class="handIndicator" data-toggle="tooltip" data-placement="left" data-container="body"
+                 title="X Hands Up">
+                <img src="images/hand-grey.svg" alt="" height="23px">
             </div>
         </div>
-        <div class="footer">
+        <div class="content">
+            <table id="raiseHandUserList" class="table table-condensed table-participants">
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="footer" style="display:none;">
             <button class="btn btn-primary" data-toggle="modal" data-target="#newSourceModal" data-keyboard="false">Add
                 New Source
             </button>
         </div>
     </div>
 </div>
-<nav class="navbar navbar-inverse">
-    <div class="container-fluid text-center">
-        <div style="padding: 20px;">
-            <button class="btn btn-primary" data-toggle="modal" data-target="#newSourceModal" data-keyboard="false">Add
-                New Source
-            </button>
-        </div>
-    </div>
-</nav>
+
 <!-- Modal -->
 <div class="modal fade" id="newSourceModal" role="dialog">
     <div class="modal-dialog">
@@ -199,6 +193,13 @@
 <script src="js/broadcast.js" type="text/javascript"></script>
 <script src="js/common.js" type="text/javascript"></script>
 <script src="js/host.js" type="text/javascript"></script>
+
+<!-- Tooltips -->
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+
+    });
+</script>
 
 <script>
 </script>

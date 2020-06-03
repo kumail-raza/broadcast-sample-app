@@ -1,4 +1,13 @@
 (function (window, $) {
+    if (!JSON.parse(localStorage.getItem('logEnable'))) {
+        console.log = () => {
+        }
+    }
+
+    Array.prototype.diff = function (arr) {
+        return this.filter(x => !arr.find(i => i.id == x.id && i.handState == x.handState && i.userInBroadcastAs == x.userInBroadcastAs));
+    }
+
     var broadcast = {status: 'waiting', streams: 1};
     let broadcastHandler;
 
@@ -231,8 +240,7 @@
             "headers": {
                 "Content-Type": "application/json"
             },
-            "data": JSON.stringify({"userId": userId, "status": status}),
-            "success": (res) => console.log(res)
+            "data": JSON.stringify({"userId": userId, "status": status})
         };
         $("#newSourceModal").modal('hide')
         $.ajax(settings).done(function (response) {
@@ -240,21 +248,124 @@
         });
     }
 
+    var lowerTheHand = function (userId) {
+        var settings = {
+            "url": `${baseURL}/cmserver/api/raiseHand`,
+            "method": "POST",
+            "timeout": 0,
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "data": JSON.stringify({"userId": userId, "state": '0'})
+        };
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+        });
+    }
+
+    let masterRaiseHandList = [];
+    let domRaiseHandList = [];
     var addTree = (data) => {
         window.dataX = data;
         const groups = {...data.reservationLess, ...data.scheduled};
+        groups['onRampUser'] = [].concat(data.onRampReservationLess).concat(data.onRampScheduled);
+
+        masterRaiseHandList = []
+
         if (groups) {
             const items = []
             for (let group in groups) {
                 const users = groups[group].map(user => {
-                    return `<li data-id="${user.id}">${user.name} (${user.id})</li>`
+                    let classSelected = '';
+                    if (user.userInBroadcastAs === 'presenter') {
+                        classSelected = 'selected';
+                    }
+                    // if (user.handState === 'up') {
+                    masterRaiseHandList.push({
+                        id: user.id,
+                        name: user.name,
+                        handState: user.handState,
+                        userInBroadcastAs: user.userInBroadcastAs
+                    })
+                    // }
+
+                    let icon = ''
+                    if (user.userInBroadcastAs === 'presenter')
+                        icon = '<i class="fa fa-circle" aria-hidden="true" style="float: right;"></i>';
+                    else if (user.handState === 'up')
+                        icon = '<img src="images/hand-green.svg" class="icon-hand" style="float: right; width: 15px;">';
+
+                    return `<li data-id="${user.id}" class="${classSelected}">${user.name}${icon}</li>`
                 })
+                console.log(users)
                 items.push('<li>\n<span class="arrow">' + group + '</span>\n<ul class="nested">\n ' + users.join('\n ') + '\n</ul>\n</li>')
             }
+            let IsNewRaiseHand = false;
+            const newRaiseHandList = masterRaiseHandList.diff(domRaiseHandList).map(user => {
+                IsNewRaiseHand = true;
+                if ($(`#raiseHandUserList tbody #user-${user.id}`).length > 0) {
+                    console.log('remove prev entry')
+                    $(`#raiseHandUserList tbody #user-${user.id}`).remove();
+                }
+                return `<tr id="user-${user.id}"  class="${user.userInBroadcastAs === 'presenter' ? 'selected' : ''}">
+                             <td class="user-icon"><i class="fa fa-user"></i></td>
+                             <td class="user-name dropdown">
+                                <span class="name" data-toggle="dropdown">${user.name}</span>
+                                <ul class="dropdown-menu">
+                                    <li><span data-action="${user.userInBroadcastAs !== 'presenter' ? 'add' : 'remove'}" data-userid="${user.id}">${user.userInBroadcastAs !== 'presenter' ? 'Add' : 'Remove'}</span></li>
+                                    <li><span data-action="lower" data-userid="${user.id}" style="display:${user.handState == 'up' ? 'inline' : 'none'}">Lower Hand</span></li>
+                                </ul>
+                             </td>
+                             <td class="hand-icon">
+                                <span class="${user.handState}"><img src="images/hand-green.svg" class="icon-hand"></span>
+                                <i class="fa fa-circle" aria-hidden="true" style="float: right;"></i>
+                              </td>
+                            </tr>`
+            })
             console.log(items.join('\n'));
             $('#tree ul').html(items.join('\n'))
-        }
 
+            $('#raiseHandUserList tbody').prepend(newRaiseHandList.join('\n '))
+
+            domRaiseHandList = masterRaiseHandList;
+            console.dir(domRaiseHandList)
+            const countRaiseHands = domRaiseHandList.filter(u => u.handState === 'up').length;
+
+            jQuery('.handIndicator').removeClass('new')
+            if (countRaiseHands && IsNewRaiseHand) {
+                jQuery('.handIndicator').tooltip('hide')
+                jQuery('.handIndicator').addClass('new')
+            }
+            jQuery('.handIndicator').attr('data-original-title', (countRaiseHands ? countRaiseHands : 'No') + ' Hands Up');
+            if (IsNewRaiseHand && !jQuery('#' + jQuery('.handIndicator').attr('aria-describedby')).hasClass('in')) {
+                jQuery('.handIndicator').tooltip('show')
+            }
+
+        }
+        $('#raiseHandUserList .dropdown-menu span').off('click');
+        $('#raiseHandUserList .dropdown-menu span').on('click', function () {
+            const action = $(this).data('action');
+            const userId = $(this).data('userid');
+
+            const isHandUp = $(this).parent().parent().parent().siblings('.hand-icon').find('span').hasClass('up')
+
+            if (action === 'add') {
+                if (broadcast.streams > 3) {
+                    alert('max 4 can be host at a time')
+                    return;
+                }
+                connectDisconnectParticipant(userId, '1');
+                $(`#raiseHandUserList tbody tr#user-${userId}`).addClass('selected')
+            } else if (action === 'remove') {
+                connectDisconnectParticipant(userId, '0');
+                $(`#raiseHandUserList tbody tr#user-${userId}`).removeClass('selected')
+            } else {
+                if (isHandUp) {
+                    lowerTheHand(userId);
+                }
+            }
+            $(`#raiseHandUserList tbody tr#user-${userId} .hand-icon span`).removeClass('up')
+        })
 
         var toggler = document.getElementById('tree').getElementsByClassName("arrow");
         for (let i = 0; i < toggler.length; i++) {
@@ -264,22 +375,14 @@
             });
         }
         $('#tree ul.nested li').on('click', function () {
-            console.log($(this))
             const userId = $(this).data('id');
-            if ($(this).hasClass('selected')) {
-                $(this).removeClass('selected')
-                window.selectedUsers.splice(window.selectedUsers.indexOf(userId), 1)
-                return;
-            }
-            if (broadcast.streams > 3) {
+            let state = $(this).hasClass('selected') ? '0' : '1';
+            if (state === '1' && broadcast.streams > 3) {
                 alert('max 4 can be host at a time')
                 return;
             }
-            $(this).addClass('selected')
-            window.selectedUsers = window.selectedUsers || [];
-            window.selectedUsers.push(userId);
-
-            connectDisconnectParticipant(userId, '1');
+            $(this).toggleClass('selected')
+            connectDisconnectParticipant(userId, state);
         })
     }
 
@@ -288,8 +391,10 @@
     var alreadyConnectedToTokBox = false;
 
     var fetchLatestState = () => {
+        // || $('#raiseHandUserList tbody .dropdown').hasClass('open')
         if (($("#newSourceModal").data('bs.modal') || {}).isShown) {
-            return
+            console.log('skip... fetching')
+            return;
         }
         $.ajax({
             url: `${baseURL}/cmserver/api/getServerState`,
@@ -338,7 +443,16 @@
         });
     }
 
-    setInterval(() => fetchLatestState(), 10000);
+    setInterval(() => fetchLatestState(), 3000);
 
     fetchLatestState();
+
+    jQuery(".toggleRightSidebar, .handIndicator").click(function () {
+        $(".sidebar.right").toggleClass("collapse");
+        jQuery('.handIndicator').removeClass('new')
+    });
+
+    jQuery(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
 })(window, jQuery);
