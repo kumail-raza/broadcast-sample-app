@@ -300,9 +300,9 @@
                 console.log(users)
                 items.push('<li>\n<span class="arrow">' + group + '</span>\n<ul class="nested">\n ' + users.join('\n ') + '\n</ul>\n</li>')
             }
-            let IsNewRaiseHand = false;
+            let isChangeInHandState = false;
             const newRaiseHandList = masterRaiseHandList.diff(domRaiseHandList).map(user => {
-                IsNewRaiseHand = true;
+                isChangeInHandState = true;
                 if ($(`#raiseHandUserList tbody #user-${user.id}`).length > 0) {
                     console.log('remove prev entry')
                     $(`#raiseHandUserList tbody #user-${user.id}`).remove();
@@ -330,17 +330,21 @@
             domRaiseHandList = masterRaiseHandList;
             console.dir(domRaiseHandList)
             const countRaiseHands = domRaiseHandList.filter(u => u.handState === 'up').length;
-
-            jQuery('.handIndicator').removeClass('new')
-            if (countRaiseHands && IsNewRaiseHand) {
+            if (isChangeInHandState){
                 jQuery('.handIndicator').tooltip('hide')
-                jQuery('.handIndicator').addClass('new')
-            }
-            jQuery('.handIndicator').attr('data-original-title', (countRaiseHands ? countRaiseHands : 'No') + ' Hands Up');
-            if (IsNewRaiseHand && !jQuery('#' + jQuery('.handIndicator').attr('aria-describedby')).hasClass('in')) {
-                jQuery('.handIndicator').tooltip('show')
+                if (countRaiseHands) {
+                    jQuery('.handIndicator').addClass('new')
+                } else if (!countRaiseHands){
+                    jQuery('.handIndicator').removeClass('new')
+                }
             }
 
+            jQuery('.handIndicator').attr('data-original-title', (countRaiseHands ? countRaiseHands : 'No') + ' Hands Up');
+            setTimeout(() => {
+                if (isChangeInHandState && !jQuery('#' + jQuery('.handIndicator').attr('aria-describedby')).hasClass('in')) {
+                    jQuery('.handIndicator').tooltip('show')
+                }
+            }, 200)
         }
         $('#raiseHandUserList .dropdown-menu span').off('click');
         $('#raiseHandUserList .dropdown-menu span').on('click', function () {
